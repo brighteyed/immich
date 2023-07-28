@@ -358,7 +358,7 @@
 </section>
 
 <Portal target="body">
-  {#if showAssetViewer}
+  {#if $showAssetViewer}
     <AssetViewer
       asset={$viewingAsset}
       on:navigate-previous={navigateToPreviousAsset}
