@@ -3,7 +3,6 @@
   import UserPageLayout from '$lib/components/layouts/user-page-layout.svelte';
   import MapSettingsModal from '$lib/components/map-page/map-settings-modal.svelte';
   import Portal from '$lib/components/shared-components/portal/portal.svelte';
-  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { mapSettings } from '$lib/stores/preferences.store';
   import { MapMarkerResponseDto, api } from '@api';
   import { isEqual, omit } from 'lodash-es';
@@ -34,7 +33,6 @@
     if (abortController) {
       abortController.abort();
     }
-    assetInteractionStore.clearMultiselect();
     assetViewingStore.showAssetViewer(false);
   });
 
