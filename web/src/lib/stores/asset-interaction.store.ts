@@ -1,32 +1,26 @@
 import { derived, writable } from 'svelte/store';
 import type { AssetResponseDto } from '../../api/open-api';
 
-/**
- * Multi-selection mode
- */
-export const assetsInAlbumStoreState = writable<AssetResponseDto[]>([]);
-// Selected assets
-export const selectedAssets = writable<Set<AssetResponseDto>>(new Set());
-// Selected date groups
-export const selectedGroup = writable<Set<string>>(new Set());
-// If any asset selected
-export const isMultiSelectStoreState = derived(selectedAssets, ($selectedAssets) => $selectedAssets.size > 0);
-
-/**
- * Range selection
- */
-// Candidates for the range selection. This set includes only loaded assets, so it improves highlight
-// performance. From the user's perspective, range is highlighted almost immediately
-export const assetSelectionCandidates = writable<Set<AssetResponseDto>>(new Set());
-// The beginning of the selection range
-export const assetSelectionStart = writable<AssetResponseDto | null>(null);
-
 function createAssetInteractionStore() {
   let _selectedAssets: Set<AssetResponseDto>;
   let _selectedGroup: Set<string>;
   let _assetsInAlbums: AssetResponseDto[];
   let _assetSelectionCandidates: Set<AssetResponseDto>;
   let _assetSelectionStart: AssetResponseDto | null;
+
+  const assetsInAlbumStoreState = writable<AssetResponseDto[]>([]);
+  // Selected assets
+  const selectedAssets = writable<Set<AssetResponseDto>>(new Set());
+  // Selected date groups
+  const selectedGroup = writable<Set<string>>(new Set());
+  // If any asset selected
+  const isMultiSelectStoreState = derived(selectedAssets, ($selectedAssets) => $selectedAssets.size > 0);
+
+  // Candidates for the range selection. This set includes only loaded assets, so it improves highlight
+  // performance. From the user's perspective, range is highlighted almost immediately
+  const assetSelectionCandidates = writable<Set<AssetResponseDto>>(new Set());
+  // The beginning of the selection range
+  const assetSelectionStart = writable<AssetResponseDto | null>(null);
 
   selectedAssets.subscribe((assets) => {
     _selectedAssets = assets;
@@ -118,6 +112,24 @@ function createAssetInteractionStore() {
     clearAssetSelectionCandidates,
     setAssetSelectionStart,
     clearMultiselect,
+    isMultiSelect: {
+      subscribe: isMultiSelectStoreState.subscribe,
+    },
+    assetsInAlbumState: {
+      subscribe: assetsInAlbumStoreState.subscribe,
+    },
+    selectedAssets: {
+      subscribe: selectedAssets.subscribe,
+    },
+    selectedGroup: {
+      subscribe: selectedGroup.subscribe,
+    },
+    assetSelectionCandidates: {
+      subscribe: assetSelectionCandidates.subscribe,
+    },
+    assetSelectionStart: {
+      subscribe: assetSelectionStart.subscribe,
+    },
   };
 }
 

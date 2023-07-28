@@ -1,12 +1,5 @@
 <script lang="ts">
-  import {
-    assetInteractionStore,
-    assetSelectionCandidates,
-    assetsInAlbumStoreState,
-    isMultiSelectStoreState,
-    selectedAssets,
-    selectedGroup,
-  } from '$lib/stores/asset-interaction.store';
+  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { assetStore } from '$lib/stores/assets.store';
   import { locale } from '$lib/stores/preferences.store';
   import { getAssetRatio } from '$lib/utils/asset-utils';
@@ -20,6 +13,9 @@
   import { fly } from 'svelte/transition';
   import Thumbnail from '../assets/thumbnail/thumbnail.svelte';
   import { assetViewingStore } from '$lib/stores/asset-viewing.store';
+
+  const { selectedGroup, selectedAssets, assetSelectionCandidates, assetsInAlbumState, isMultiSelect } =
+    assetInteractionStore;
 
   export let assets: AssetResponseDto[];
   export let bucketDate: string;
@@ -95,7 +91,7 @@
       return;
     }
 
-    if ($isMultiSelectStoreState) {
+    if ($isMultiSelect) {
       assetSelectHandler(asset, assetsInDateGroup, dateGroupTitle);
     } else {
       assetViewingStore.setAssetId(asset.id);
@@ -138,7 +134,7 @@
     // Show multi select icon on hover on date group
     hoveredDateGroup = dateGroupTitle;
 
-    if ($isMultiSelectStoreState) {
+    if ($isMultiSelect) {
       dispatch('selectAssetCandidates', { asset });
     }
   };
@@ -208,9 +204,9 @@
               on:click={() => assetClickHandler(asset, assetsInDateGroup, dateGroupTitle)}
               on:select={() => assetSelectHandler(asset, assetsInDateGroup, dateGroupTitle)}
               on:mouse-event={() => assetMouseEventHandler(dateGroupTitle, asset)}
-              selected={$selectedAssets.has(asset) || $assetsInAlbumStoreState.some(({ id }) => id === asset.id)}
+              selected={$selectedAssets.has(asset) || $assetsInAlbumState.some(({ id }) => id === asset.id)}
               selectionCandidate={$assetSelectionCandidates.has(asset)}
-              disabled={$assetsInAlbumStoreState.some(({ id }) => id === asset.id)}
+              disabled={$assetsInAlbumState.some(({ id }) => id === asset.id)}
               thumbnailWidth={box.width}
               thumbnailHeight={box.height}
             />

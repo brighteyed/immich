@@ -8,7 +8,7 @@
   import AssetSelectControlBar from '$lib/components/photos-page/asset-select-control-bar.svelte';
   import ControlAppBar from '$lib/components/shared-components/control-app-bar.svelte';
   import { AppRoute } from '$lib/constants';
-  import { assetInteractionStore, isMultiSelectStoreState, selectedAssets } from '$lib/stores/asset-interaction.store';
+  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { onDestroy } from 'svelte';
   import ArrowLeft from 'svelte-material-icons/ArrowLeft.svelte';
   import Plus from 'svelte-material-icons/Plus.svelte';
@@ -16,13 +16,15 @@
 
   export let data: PageData;
 
+  const { isMultiSelect, selectedAssets } = assetInteractionStore;
+
   onDestroy(() => {
     assetInteractionStore.clearMultiselect();
   });
 </script>
 
 <main class="grid h-screen bg-immich-bg pt-18 dark:bg-immich-dark-bg">
-  {#if $isMultiSelectStoreState}
+  {#if $isMultiSelect}
     <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
       <DownloadAction />
     </AssetSelectControlBar>

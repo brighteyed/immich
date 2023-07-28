@@ -11,7 +11,7 @@
   import AssetSelectContextMenu from '$lib/components/photos-page/asset-select-context-menu.svelte';
   import AssetSelectControlBar from '$lib/components/photos-page/asset-select-control-bar.svelte';
   import EmptyPlaceholder from '$lib/components/shared-components/empty-placeholder.svelte';
-  import { assetInteractionStore, isMultiSelectStoreState, selectedAssets } from '$lib/stores/asset-interaction.store';
+  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { assetStore } from '$lib/stores/assets.store';
   import { openFileUploadDialog } from '$lib/utils/file-uploader';
   import { api } from '@api';
@@ -22,6 +22,8 @@
 
   export let data: PageData;
   let assetCount = 1;
+
+  const { isMultiSelect, selectedAssets } = assetInteractionStore;
 
   onMount(async () => {
     const { data: stats } = await api.assetApi.getAssetStats();
@@ -39,9 +41,9 @@
   };
 </script>
 
-<UserPageLayout user={data.user} hideNavbar={$isMultiSelectStoreState} showUploadButton>
+<UserPageLayout user={data.user} hideNavbar={$isMultiSelect} showUploadButton>
   <svelte:fragment slot="header">
-    {#if $isMultiSelectStoreState}
+    {#if $isMultiSelect}
       <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
         <CreateSharedLink />
         <SelectAllAssets />

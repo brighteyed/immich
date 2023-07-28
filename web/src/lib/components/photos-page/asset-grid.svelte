@@ -1,13 +1,7 @@
 <script lang="ts">
   import { BucketPosition } from '$lib/models/asset-grid-state';
   import { get } from 'svelte/store';
-  import {
-    assetInteractionStore,
-    assetSelectionCandidates,
-    assetSelectionStart,
-    isMultiSelectStoreState,
-    selectedAssets,
-  } from '$lib/stores/asset-interaction.store';
+  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { assetViewingStore } from '$lib/stores/asset-viewing.store';
   import { assetStore } from '$lib/stores/assets.store';
   import { locale } from '$lib/stores/preferences.store';
@@ -45,6 +39,7 @@
   let bucketInfo: AssetCountByTimeBucketResponseDto;
   let showShortcuts = false;
 
+  const { assetSelectionCandidates, assetSelectionStart, selectedAssets, isMultiSelect } = assetInteractionStore;
   const onKeyboardPress = (event: KeyboardEvent) => handleKeyboardPress(event);
 
   onMount(async () => {
@@ -296,7 +291,7 @@
   };
 
   const onSelectStart = (e: Event) => {
-    if ($isMultiSelectStoreState && shiftKeyIsDown) {
+    if ($isMultiSelect && shiftKeyIsDown) {
       e.preventDefault();
     }
   };

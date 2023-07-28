@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { assetInteractionStore, assetsInAlbumStoreState, selectedAssets } from '$lib/stores/asset-interaction.store';
+  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { locale } from '$lib/stores/preferences.store';
   import { openFileUploadDialog } from '$lib/utils/file-uploader';
   import type { AssetResponseDto } from '@api';
@@ -11,12 +11,13 @@
   import ControlAppBar from '../shared-components/control-app-bar.svelte';
 
   const dispatch = createEventDispatcher();
+  const { selectedAssets, assetsInAlbumState } = assetInteractionStore;
 
   export let albumId: string;
   export let assetsInAlbum: AssetResponseDto[];
 
   onMount(() => {
-    $assetsInAlbumStoreState = assetsInAlbum;
+    $assetsInAlbumState = assetsInAlbum;
   });
 
   const addSelectedAssets = async () => {
