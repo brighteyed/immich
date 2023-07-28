@@ -97,7 +97,7 @@
     if ($isMultiSelectStoreState) {
       assetSelectHandler(asset, assetsInDateGroup, dateGroupTitle);
     } else {
-      assetInteractionStore.setViewingAsset(asset);
+      assetInteractionStore.setViewingAssetId(asset.id);
     }
   };
 

@@ -1,5 +1,5 @@
 import { AssetGridState, BucketPosition } from '$lib/models/asset-grid-state';
-import { api, AssetCountByTimeBucketResponseDto } from '@api';
+import { api, AssetCountByTimeBucketResponseDto, AssetResponseDto } from '@api';
 import { writable } from 'svelte/store';
 
 function createAssetStore() {
@@ -188,12 +188,71 @@ function createAssetStore() {
     });
   };
 
+  const _getNextAsset = async (currentBucketIndex: number, assetId: string): Promise<AssetResponseDto | null> => {
+    const currentBucket = _assetGridState.buckets[currentBucketIndex];
+    const assetIndex = currentBucket.assets.findIndex(({ id }) => id == assetId);
+    if (assetIndex === -1) {
+      return null;
+    }
+
+    if (assetIndex + 1 < currentBucket.assets.length) {
+      return currentBucket.assets[assetIndex + 1];
+    }
+
+    const nextBucketIndex = currentBucketIndex + 1;
+    if (nextBucketIndex >= _assetGridState.buckets.length) {
+      return null;
+    }
+
+    const nextBucket = _assetGridState.buckets[nextBucketIndex];
+    await assetStore.getAssetsByBucket(nextBucket.bucketDate, BucketPosition.Unknown);
+
+    return nextBucket.assets[0] ?? null;
+  };
+
+  const _getPrevAsset = async (currentBucketIndex: number, assetId: string): Promise<AssetResponseDto | null> => {
+    const currentBucket = _assetGridState.buckets[currentBucketIndex];
+    const assetIndex = currentBucket.assets.findIndex(({ id }) => id == assetId);
+    if (assetIndex === -1) {
+      return null;
+    }
+
+    if (assetIndex > 0) {
+      return currentBucket.assets[assetIndex - 1];
+    }
+
+    const prevBucketIndex = currentBucketIndex - 1;
+    if (prevBucketIndex < 0) {
+      return null;
+    }
+
+    const prevBucket = _assetGridState.buckets[prevBucketIndex];
+    await assetStore.getAssetsByBucket(prevBucket.bucketDate, BucketPosition.Unknown);
+
+    return prevBucket.assets[prevBucket.assets.length - 1] ?? null;
+  };
+
+  const navigateAsset = async (assetId: string, direction: 'next' | 'previous'): Promise<string | null> => {
+    const currentBucketIndex = _assetGridState.loadedAssets[assetId];
+    if (currentBucketIndex < 0 || currentBucketIndex >= _assetGridState.buckets.length) {
+      return null;
+    }
+
+    const asset =
+      direction === 'next'
+        ? await _getNextAsset(currentBucketIndex, assetId)
+        : await _getPrevAsset(currentBucketIndex, assetId);
+
+    return asset?.id ?? null;
+  };
+
   return {
     setInitialState,
     getAssetsByBucket,
     removeAsset,
     updateBucketHeight,
     cancelBucketRequest,
+    navigateAsset,
     updateAsset,
     subscribe,
   };

@@ -118,12 +118,18 @@
     assetGridElement.scrollBy(0, event.detail.heightDelta);
   }
 
-  const navigateToPreviousAsset = () => {
-    assetInteractionStore.navigateAsset('previous');
+  const navigateToPreviousAsset = async () => {
+    const prevAsset = await assetStore.navigateAsset($viewingAssetStoreState.id, 'previous');
+    if (prevAsset) {
+      assetInteractionStore.setViewingAssetId(prevAsset);
+    }
   };
 
-  const navigateToNextAsset = () => {
-    assetInteractionStore.navigateAsset('next');
+  const navigateToNextAsset = async () => {
+    const nextAsset = await assetStore.navigateAsset($viewingAssetStoreState.id, 'next');
+    if (nextAsset) {
+      assetInteractionStore.setViewingAssetId(nextAsset);
+    }
   };
 
   let lastScrollPosition = 0;

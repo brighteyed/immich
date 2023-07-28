@@ -1,7 +1,5 @@
-import { AssetGridState, BucketPosition } from '$lib/models/asset-grid-state';
 import { api, AssetResponseDto } from '@api';
 import { derived, writable } from 'svelte/store';
-import { assetStore } from './assets.store';
 
 // Asset Viewer
 export const viewingAssetStoreState = writable<AssetResponseDto>();
@@ -28,22 +26,11 @@ export const assetSelectionCandidates = writable<Set<AssetResponseDto>>(new Set(
 export const assetSelectionStart = writable<AssetResponseDto | null>(null);
 
 function createAssetInteractionStore() {
-  let _assetGridState = new AssetGridState();
-  let _viewingAssetStoreState: AssetResponseDto;
   let _selectedAssets: Set<AssetResponseDto>;
   let _selectedGroup: Set<string>;
   let _assetsInAlbums: AssetResponseDto[];
   let _assetSelectionCandidates: Set<AssetResponseDto>;
   let _assetSelectionStart: AssetResponseDto | null;
-
-  // Subscriber
-  assetStore.subscribe((state) => {
-    _assetGridState = state;
-  });
-
-  viewingAssetStoreState.subscribe((asset) => {
-    _viewingAssetStoreState = asset;
-  });
 
   selectedAssets.subscribe((assets) => {
     _selectedAssets = assets;
@@ -66,13 +53,6 @@ function createAssetInteractionStore() {
   });
   // Methods
 
-  /**
-   * Asset Viewer
-   */
-  const setViewingAsset = async (asset: AssetResponseDto) => {
-    setViewingAssetId(asset.id);
-  };
-
   const setViewingAssetId = async (id: string) => {
     const { data } = await api.assetApi.getAssetById({ id });
     viewingAssetStoreState.set(data);
@@ -81,67 +61,6 @@ function createAssetInteractionStore() {
 
   const setIsViewingAsset = (isViewing: boolean) => {
     isViewingAssetStoreState.set(isViewing);
-  };
-
-  const getNextAsset = async (currentBucketIndex: number, assetId: string): Promise<AssetResponseDto | null> => {
-    const currentBucket = _assetGridState.buckets[currentBucketIndex];
-    const assetIndex = currentBucket.assets.findIndex(({ id }) => id == assetId);
-    if (assetIndex === -1) {
-      return null;
-    }
-
-    if (assetIndex + 1 < currentBucket.assets.length) {
-      return currentBucket.assets[assetIndex + 1];
-    }
-
-    const nextBucketIndex = currentBucketIndex + 1;
-    if (nextBucketIndex >= _assetGridState.buckets.length) {
-      return null;
-    }
-
-    const nextBucket = _assetGridState.buckets[nextBucketIndex];
-    await assetStore.getAssetsByBucket(nextBucket.bucketDate, BucketPosition.Unknown);
-
-    return nextBucket.assets[0] ?? null;
-  };
-
-  const getPrevAsset = async (currentBucketIndex: number, assetId: string): Promise<AssetResponseDto | null> => {
-    const currentBucket = _assetGridState.buckets[currentBucketIndex];
-    const assetIndex = currentBucket.assets.findIndex(({ id }) => id == assetId);
-    if (assetIndex === -1) {
-      return null;
-    }
-
-    if (assetIndex > 0) {
-      return currentBucket.assets[assetIndex - 1];
-    }
-
-    const prevBucketIndex = currentBucketIndex - 1;
-    if (prevBucketIndex < 0) {
-      return null;
-    }
-
-    const prevBucket = _assetGridState.buckets[prevBucketIndex];
-    await assetStore.getAssetsByBucket(prevBucket.bucketDate, BucketPosition.Unknown);
-
-    return prevBucket.assets[prevBucket.assets.length - 1] ?? null;
-  };
-
-  const navigateAsset = async (direction: 'next' | 'previous') => {
-    const currentAssetId = _viewingAssetStoreState.id;
-    const currentBucketIndex = _assetGridState.loadedAssets[currentAssetId];
-    if (currentBucketIndex < 0 || currentBucketIndex >= _assetGridState.buckets.length) {
-      return;
-    }
-
-    const asset =
-      direction === 'next'
-        ? await getNextAsset(currentBucketIndex, currentAssetId)
-        : await getPrevAsset(currentBucketIndex, currentAssetId);
-
-    if (asset) {
-      setViewingAsset(asset);
-    }
   };
 
   /**
@@ -205,10 +124,8 @@ function createAssetInteractionStore() {
   };
 
   return {
-    setViewingAsset,
     setViewingAssetId,
     setIsViewingAsset,
-    navigateAsset,
     addAssetToMultiselectGroup,
     removeAssetFromMultiselectGroup,
     addGroupToMultiselectGroup,
