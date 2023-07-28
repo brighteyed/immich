@@ -19,7 +19,7 @@
 <script lang="ts">
   import { albumAssetSelectionStore } from '$lib/stores/album-asset-selection.store';
 
-  import { assetGridState } from '$lib/stores/assets.store';
+  import { assetStore } from '$lib/stores/assets.store';
 
   import { createEventDispatcher } from 'svelte';
   import { SegmentScrollbarLayout } from './segment-scrollbar-layout';
@@ -27,7 +27,7 @@
   export let scrollTop = 0;
   export let scrollbarHeight = 0;
 
-  $: timelineHeight = $assetGridState.timelineHeight;
+  $: timelineHeight = $assetStore.timelineHeight;
   $: timelineScrolltop = (scrollbarPosition / scrollbarHeight) * timelineHeight;
 
   let segmentScrollbarLayout: SegmentScrollbarLayout[] = [];
@@ -48,7 +48,7 @@
 
   $: {
     let result: SegmentScrollbarLayout[] = [];
-    for (const bucket of $assetGridState.buckets) {
+    for (const bucket of $assetStore.buckets) {
       let segmentLayout = new SegmentScrollbarLayout();
       segmentLayout.count = bucket.assets.length;
       segmentLayout.height = (bucket.bucketHeight / timelineHeight) * scrollbarHeight;

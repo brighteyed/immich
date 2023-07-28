@@ -9,7 +9,7 @@
     selectedAssets,
     viewingAssetStoreState,
   } from '$lib/stores/asset-interaction.store';
-  import { assetGridState, assetStore, loadingBucketState } from '$lib/stores/assets.store';
+  import { assetStore } from '$lib/stores/assets.store';
   import { locale } from '$lib/stores/preferences.store';
   import { formatGroupTitle, splitBucketIntoDateGroups } from '$lib/utils/timeline-util';
   import type { UserResponseDto } from '@api';
@@ -61,7 +61,7 @@
     // Get asset bucket if bucket height is smaller than viewport height
     let bucketsToFetchInitially: string[] = [];
     let initialBucketsHeight = 0;
-    $assetGridState.buckets.every((bucket) => {
+    $assetStore.buckets.every((bucket) => {
       if (initialBucketsHeight < viewportHeight) {
         initialBucketsHeight += bucket.bucketHeight;
         bucketsToFetchInitially.push(bucket.bucketDate);
@@ -225,8 +225,8 @@
     assetInteractionStore.clearAssetSelectionCandidates();
 
     if ($assetSelectionStart && rangeSelection) {
-      let startBucketIndex = $assetGridState.loadedAssets[$assetSelectionStart.id];
-      let endBucketIndex = $assetGridState.loadedAssets[asset.id];
+      let startBucketIndex = $assetStore.loadedAssets[$assetSelectionStart.id];
+      let endBucketIndex = $assetStore.loadedAssets[asset.id];
 
       if (endBucketIndex < startBucketIndex) {
         [startBucketIndex, endBucketIndex] = [endBucketIndex, startBucketIndex];
@@ -234,7 +234,7 @@
 
       // Select/deselect assets in all intermediate buckets
       for (let bucketIndex = startBucketIndex + 1; bucketIndex < endBucketIndex; bucketIndex++) {
-        const bucket = $assetGridState.buckets[bucketIndex];
+        const bucket = $assetStore.buckets[bucketIndex];
         await assetStore.getAssetsByBucket(bucket.bucketDate, BucketPosition.Unknown);
         for (const asset of bucket.assets) {
           if (deselect) {
@@ -247,7 +247,7 @@
 
       // Update date group selection
       for (let bucketIndex = startBucketIndex; bucketIndex <= endBucketIndex; bucketIndex++) {
-        const bucket = $assetGridState.buckets[bucketIndex];
+        const bucket = $assetStore.buckets[bucketIndex];
 
         // Split bucket into date groups and check each group
         const assetsGroupByDate = splitBucketIntoDateGroups(bucket.assets, $locale);
@@ -276,14 +276,14 @@
       return;
     }
 
-    let start = $assetGridState.assets.indexOf(rangeStart);
-    let end = $assetGridState.assets.indexOf(asset);
+    let start = $assetStore.assets.indexOf(rangeStart);
+    let end = $assetStore.assets.indexOf(asset);
 
     if (start > end) {
       [start, end] = [end, start];
     }
 
-    assetInteractionStore.setAssetSelectionCandidates($assetGridState.assets.slice(start, end + 1));
+    assetInteractionStore.setAssetSelectionCandidates($assetStore.assets.slice(start, end + 1));
   };
 
   const onSelectStart = (e: Event) => {
@@ -299,7 +299,7 @@
   <ShowShortcuts on:close={() => (showShortcuts = !showShortcuts)} />
 {/if}
 
-{#if bucketInfo && viewportHeight && $assetGridState.timelineHeight > viewportHeight}
+{#if bucketInfo && viewportHeight && $assetStore.timelineHeight > viewportHeight}
   <Scrollbar
     scrollbarHeight={viewportHeight}
     scrollTop={lastScrollPosition}
@@ -321,15 +321,12 @@
     {#if showMemoryLane}
       <MemoryLane />
     {/if}
-    <section id="virtual-timeline" style:height={$assetGridState.timelineHeight + 'px'}>
-      {#each $assetGridState.buckets as bucket, bucketIndex (bucketIndex)}
+    <section id="virtual-timeline" style:height={$assetStore.timelineHeight + 'px'}>
+      {#each $assetStore.buckets as bucket, bucketIndex (bucketIndex)}
         <IntersectionObserver
           on:intersected={intersectedHandler}
           on:hidden={async () => {
-            // If bucket is hidden and in loading state, cancel the request
-            if ($loadingBucketState[bucket.bucketDate]) {
-              await assetStore.cancelBucketRequest(bucket.cancelToken, bucket.bucketDate);
-            }
+            await assetStore.cancelBucketRequest(bucket.cancelToken, bucket.bucketDate);
           }}
           let:intersecting
           top={750}

@@ -2,24 +2,17 @@ import { AssetGridState, BucketPosition } from '$lib/models/asset-grid-state';
 import { api, AssetCountByTimeBucketResponseDto } from '@api';
 import { writable } from 'svelte/store';
 
-/**
- * The state that holds information about the asset grid
- */
-export const assetGridState = writable<AssetGridState>(new AssetGridState());
-export const loadingBucketState = writable<{ [key: string]: boolean }>({});
-
 function createAssetStore() {
+  let _loadingBuckets: { [key: string]: boolean } = {};
   let _assetGridState = new AssetGridState();
-  assetGridState.subscribe((state) => {
+
+  const { subscribe, set, update } = writable(new AssetGridState());
+
+  subscribe((state) => {
     _assetGridState = state;
   });
 
-  let _loadingBucketState: { [key: string]: boolean } = {};
-  loadingBucketState.subscribe((state) => {
-    _loadingBucketState = state;
-  });
-
-  const estimateViewportHeight = (assetCount: number, viewportWidth: number): number => {
+  const _estimateViewportHeight = (assetCount: number, viewportWidth: number): number => {
     // Ideally we would use the average aspect ratio for the photoset, however assume
     // a normal landscape aspect ratio of 3:2, then discount for the likelihood we
     // will be scaling down and coalescing.
@@ -51,13 +44,13 @@ function createAssetStore() {
     data: AssetCountByTimeBucketResponseDto,
     userId: string | undefined,
   ) => {
-    assetGridState.set({
+    set({
       viewportHeight,
       viewportWidth,
       timelineHeight: 0,
       buckets: data.buckets.map((bucket) => ({
         bucketDate: bucket.timeBucket,
-        bucketHeight: estimateViewportHeight(bucket.count, viewportWidth),
+        bucketHeight: _estimateViewportHeight(bucket.count, viewportWidth),
         assets: [],
         cancelToken: new AbortController(),
         position: BucketPosition.Unknown,
@@ -68,7 +61,7 @@ function createAssetStore() {
     });
 
     // Update timeline height based on calculated bucket height
-    assetGridState.update((state) => {
+    update((state) => {
       state.timelineHeight = state.buckets.reduce((acc, b) => acc + b.bucketHeight, 0);
       return state;
     });
@@ -78,7 +71,7 @@ function createAssetStore() {
     try {
       const currentBucketData = _assetGridState.buckets.find((b) => b.bucketDate === bucket);
       if (currentBucketData?.assets && currentBucketData.assets.length > 0) {
-        assetGridState.update((state) => {
+        update((state) => {
           const bucketIndex = state.buckets.findIndex((b) => b.bucketDate === bucket);
           state.buckets[bucketIndex].position = position;
           return state;
@@ -86,10 +79,7 @@ function createAssetStore() {
         return;
       }
 
-      loadingBucketState.set({
-        ..._loadingBucketState,
-        [bucket]: true,
-      });
+      _loadingBuckets = { ..._loadingBuckets, [bucket]: true };
       const { data: assets } = await api.assetApi.getAssetByTimeBucket(
         {
           getAssetByTimeBucketDto: {
@@ -100,13 +90,9 @@ function createAssetStore() {
         },
         { signal: currentBucketData?.cancelToken.signal },
       );
-      loadingBucketState.set({
-        ..._loadingBucketState,
-        [bucket]: false,
-      });
+      _loadingBuckets = { ..._loadingBuckets, [bucket]: false };
 
-      // Update assetGridState with assets by time bucket
-      assetGridState.update((state) => {
+      update((state) => {
         const bucketIndex = state.buckets.findIndex((b) => b.bucketDate === bucket);
         state.buckets[bucketIndex].assets = assets;
         state.buckets[bucketIndex].position = position;
@@ -125,7 +111,7 @@ function createAssetStore() {
   };
 
   const removeAsset = (assetId: string) => {
-    assetGridState.update((state) => {
+    update((state) => {
       const bucketIndex = state.buckets.findIndex((b) => b.assets.some((a) => a.id === assetId));
       const assetIndex = state.buckets[bucketIndex].assets.findIndex((a) => a.id === assetId);
       state.buckets[bucketIndex].assets.splice(assetIndex, 1);
@@ -140,7 +126,7 @@ function createAssetStore() {
   };
 
   const _removeBucket = (bucketDate: string) => {
-    assetGridState.update((state) => {
+    update((state) => {
       const bucketIndex = state.buckets.findIndex((b) => b.bucketDate === bucketDate);
       state.buckets.splice(bucketIndex, 1);
       state.assets = state.buckets.flatMap((b) => b.assets);
@@ -153,7 +139,7 @@ function createAssetStore() {
     let scrollTimeline = false;
     let heightDelta = 0;
 
-    assetGridState.update((state) => {
+    update((state) => {
       const bucketIndex = state.buckets.findIndex((b) => b.bucketDate === bucket);
       // Update timeline height based on the new bucket height
       const estimateBucketHeight = state.buckets[bucketIndex].bucketHeight;
@@ -177,9 +163,13 @@ function createAssetStore() {
   };
 
   const cancelBucketRequest = async (token: AbortController, bucketDate: string) => {
+    if (!_loadingBuckets[bucketDate]) {
+      return;
+    }
+
     token.abort();
-    // set new abort controller for bucket
-    assetGridState.update((state) => {
+
+    update((state) => {
       const bucketIndex = state.buckets.findIndex((b) => b.bucketDate === bucketDate);
       state.buckets[bucketIndex].cancelToken = new AbortController();
       return state;
@@ -187,7 +177,7 @@ function createAssetStore() {
   };
 
   const updateAsset = (assetId: string, isFavorite: boolean) => {
-    assetGridState.update((state) => {
+    update((state) => {
       const bucketIndex = state.buckets.findIndex((b) => b.assets.some((a) => a.id === assetId));
       const assetIndex = state.buckets[bucketIndex].assets.findIndex((a) => a.id === assetId);
       state.buckets[bucketIndex].assets[assetIndex].isFavorite = isFavorite;
@@ -205,6 +195,7 @@ function createAssetStore() {
     updateBucketHeight,
     cancelBucketRequest,
     updateAsset,
+    subscribe,
   };
 }
 

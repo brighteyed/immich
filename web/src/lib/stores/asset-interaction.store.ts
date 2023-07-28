@@ -1,7 +1,7 @@
 import { AssetGridState, BucketPosition } from '$lib/models/asset-grid-state';
 import { api, AssetResponseDto } from '@api';
 import { derived, writable } from 'svelte/store';
-import { assetGridState, assetStore } from './assets.store';
+import { assetStore } from './assets.store';
 
 // Asset Viewer
 export const viewingAssetStoreState = writable<AssetResponseDto>();
@@ -37,7 +37,7 @@ function createAssetInteractionStore() {
   let _assetSelectionStart: AssetResponseDto | null;
 
   // Subscriber
-  assetGridState.subscribe((state) => {
+  assetStore.subscribe((state) => {
     _assetGridState = state;
   });
 

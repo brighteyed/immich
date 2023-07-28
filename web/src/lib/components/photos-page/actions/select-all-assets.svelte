@@ -3,7 +3,7 @@
   import SelectAll from 'svelte-material-icons/SelectAll.svelte';
   import TimerSand from 'svelte-material-icons/TimerSand.svelte';
   import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
-  import { assetGridState, assetStore } from '$lib/stores/assets.store';
+  import { assetStore } from '$lib/stores/assets.store';
   import { handleError } from '../../../utils/handle-error';
   import { AssetGridState, BucketPosition } from '$lib/models/asset-grid-state';
 
@@ -13,7 +13,7 @@
     try {
       selecting = true;
       let _assetGridState = new AssetGridState();
-      assetGridState.subscribe((state) => {
+      assetStore.subscribe((state) => {
         _assetGridState = state;
       });
 
