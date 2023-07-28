@@ -1,9 +1,5 @@
-import { api, AssetResponseDto } from '@api';
 import { derived, writable } from 'svelte/store';
-
-// Asset Viewer
-export const viewingAssetStoreState = writable<AssetResponseDto>();
-export const isViewingAssetStoreState = writable<boolean>(false);
+import type { AssetResponseDto } from '../../api/open-api';
 
 /**
  * Multi-selection mode
@@ -52,16 +48,6 @@ function createAssetInteractionStore() {
     _assetSelectionStart = asset;
   });
   // Methods
-
-  const setViewingAssetId = async (id: string) => {
-    const { data } = await api.assetApi.getAssetById({ id });
-    viewingAssetStoreState.set(data);
-    isViewingAssetStoreState.set(true);
-  };
-
-  const setIsViewingAsset = (isViewing: boolean) => {
-    isViewingAssetStoreState.set(isViewing);
-  };
 
   /**
    * Multiselect
@@ -124,8 +110,6 @@ function createAssetInteractionStore() {
   };
 
   return {
-    setViewingAssetId,
-    setIsViewingAsset,
     addAssetToMultiselectGroup,
     removeAssetFromMultiselectGroup,
     addGroupToMultiselectGroup,

@@ -19,6 +19,7 @@
   import CircleOutline from 'svelte-material-icons/CircleOutline.svelte';
   import { fly } from 'svelte/transition';
   import Thumbnail from '../assets/thumbnail/thumbnail.svelte';
+  import { assetViewingStore } from '$lib/stores/asset-viewing.store';
 
   export let assets: AssetResponseDto[];
   export let bucketDate: string;
@@ -97,7 +98,7 @@
     if ($isMultiSelectStoreState) {
       assetSelectHandler(asset, assetsInDateGroup, dateGroupTitle);
     } else {
-      assetInteractionStore.setViewingAssetId(asset.id);
+      assetViewingStore.setAssetId(asset.id);
     }
   };
 

@@ -3,11 +3,7 @@
   import UserPageLayout from '$lib/components/layouts/user-page-layout.svelte';
   import MapSettingsModal from '$lib/components/map-page/map-settings-modal.svelte';
   import Portal from '$lib/components/shared-components/portal/portal.svelte';
-  import {
-    assetInteractionStore,
-    isViewingAssetStoreState,
-    viewingAssetStoreState,
-  } from '$lib/stores/asset-interaction.store';
+  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { mapSettings } from '$lib/stores/preferences.store';
   import { MapMarkerResponseDto, api } from '@api';
   import { isEqual, omit } from 'lodash-es';
@@ -15,8 +11,12 @@
   import Cog from 'svelte-material-icons/Cog.svelte';
   import type { PageData } from './$types';
   import { DateTime, Duration } from 'luxon';
+  import { assetViewingStore } from '$lib/stores/asset-viewing.store';
 
   export let data: PageData;
+
+  let showAssetViewer = assetViewingStore.isViewing;
+  let viewingAsset = assetViewingStore.asset;
 
   let leaflet: typeof import('$lib/components/shared-components/leaflet');
   let mapMarkers: MapMarkerResponseDto[] = [];
@@ -35,7 +35,7 @@
       abortController.abort();
     }
     assetInteractionStore.clearMultiselect();
-    assetInteractionStore.setIsViewingAsset(false);
+    assetViewingStore.showAssetViewer(false);
   });
 
   async function loadMapMarkers() {
@@ -83,20 +83,20 @@
   }
 
   function onViewAssets(assetIds: string[], activeAssetIndex: number) {
-    assetInteractionStore.setViewingAssetId(assetIds[activeAssetIndex]);
+    assetViewingStore.setAssetId(assetIds[activeAssetIndex]);
     viewingAssets = assetIds;
     viewingAssetCursor = activeAssetIndex;
   }
 
   function navigateNext() {
     if (viewingAssetCursor < viewingAssets.length - 1) {
-      assetInteractionStore.setViewingAssetId(viewingAssets[++viewingAssetCursor]);
+      assetViewingStore.setAssetId(viewingAssets[++viewingAssetCursor]);
     }
   }
 
   function navigatePrevious() {
     if (viewingAssetCursor > 0) {
-      assetInteractionStore.setViewingAssetId(viewingAssets[--viewingAssetCursor]);
+      assetViewingStore.setAssetId(viewingAssets[--viewingAssetCursor]);
     }
   }
 </script>
@@ -142,14 +142,14 @@
 </UserPageLayout>
 
 <Portal target="body">
-  {#if $isViewingAssetStoreState}
+  {#if $showAssetViewer}
     <AssetViewer
-      asset={$viewingAssetStoreState}
+      asset={$viewingAsset}
       showNavigation={viewingAssets.length > 1}
       on:navigate-next={navigateNext}
       on:navigate-previous={navigatePrevious}
       on:close={() => {
-        assetInteractionStore.setIsViewingAsset(false);
+        assetViewingStore.showAssetViewer(false);
       }}
     />
   {/if}

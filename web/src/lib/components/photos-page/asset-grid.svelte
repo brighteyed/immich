@@ -1,14 +1,14 @@
 <script lang="ts">
   import { BucketPosition } from '$lib/models/asset-grid-state';
+  import { get } from 'svelte/store';
   import {
     assetInteractionStore,
     assetSelectionCandidates,
     assetSelectionStart,
     isMultiSelectStoreState,
-    isViewingAssetStoreState,
     selectedAssets,
-    viewingAssetStoreState,
   } from '$lib/stores/asset-interaction.store';
+  import { assetViewingStore } from '$lib/stores/asset-viewing.store';
   import { assetStore } from '$lib/stores/assets.store';
   import { locale } from '$lib/stores/preferences.store';
   import { formatGroupTitle, splitBucketIntoDateGroups } from '$lib/utils/timeline-util';
@@ -35,6 +35,9 @@
   export let user: UserResponseDto | undefined = undefined;
   export let isAlbumSelectionMode = false;
   export let showMemoryLane = false;
+
+  let showAssetViewer = assetViewingStore.isViewing;
+  let viewingAsset = assetViewingStore.asset;
 
   let viewportHeight = 0;
   let viewportWidth = 0;
@@ -93,7 +96,7 @@
       event.preventDefault();
     }
 
-    if (!$isViewingAssetStoreState) {
+    if (!$showAssetViewer) {
       switch (event.key) {
         case '?':
           if (event.shiftKey) showShortcuts = !showShortcuts;
@@ -119,16 +122,16 @@
   }
 
   const navigateToPreviousAsset = async () => {
-    const prevAsset = await assetStore.navigateAsset($viewingAssetStoreState.id, 'previous');
+    const prevAsset = await assetStore.navigateAsset(get(assetViewingStore.asset).id, 'previous');
     if (prevAsset) {
-      assetInteractionStore.setViewingAssetId(prevAsset);
+      assetViewingStore.setAssetId(prevAsset);
     }
   };
 
   const navigateToNextAsset = async () => {
-    const nextAsset = await assetStore.navigateAsset($viewingAssetStoreState.id, 'next');
+    const nextAsset = await assetStore.navigateAsset(get(assetViewingStore.asset).id, 'next');
     if (nextAsset) {
-      assetInteractionStore.setViewingAssetId(nextAsset);
+      assetViewingStore.setAssetId(nextAsset);
     }
   };
 
@@ -360,13 +363,13 @@
 </section>
 
 <Portal target="body">
-  {#if $isViewingAssetStoreState}
+  {#if showAssetViewer}
     <AssetViewer
-      asset={$viewingAssetStoreState}
+      asset={$viewingAsset}
       on:navigate-previous={navigateToPreviousAsset}
       on:navigate-next={navigateToNextAsset}
       on:close={() => {
-        assetInteractionStore.setIsViewingAsset(false);
+        assetViewingStore.showAssetViewer(false);
       }}
       on:archived={handleArchiveSuccess}
     />
