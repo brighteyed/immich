@@ -205,7 +205,7 @@ function createAssetStore() {
     }
 
     const nextBucket = _assetGridState.buckets[nextBucketIndex];
-    await assetStore.getAssetsByBucket(nextBucket.bucketDate, BucketPosition.Unknown);
+    await getAssetsByBucket(nextBucket.bucketDate, BucketPosition.Unknown);
 
     return nextBucket.assets[0] ?? null;
   };
@@ -227,7 +227,7 @@ function createAssetStore() {
     }
 
     const prevBucket = _assetGridState.buckets[prevBucketIndex];
-    await assetStore.getAssetsByBucket(prevBucket.bucketDate, BucketPosition.Unknown);
+    await getAssetsByBucket(prevBucket.bucketDate, BucketPosition.Unknown);
 
     return prevBucket.assets[prevBucket.assets.length - 1] ?? null;
   };
