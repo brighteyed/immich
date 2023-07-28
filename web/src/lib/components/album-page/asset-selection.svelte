@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { locale } from '$lib/stores/preferences.store';
   import { openFileUploadDialog } from '$lib/utils/file-uploader';
   import type { AssetResponseDto } from '@api';
@@ -10,9 +9,11 @@
   import AssetGrid from '../photos-page/asset-grid.svelte';
   import ControlAppBar from '../shared-components/control-app-bar.svelte';
   import { createAssetStore } from '$lib/stores/assets.store';
+  import { createAssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
   const dispatch = createEventDispatcher();
 
+  const assetInteractionStore = createAssetInteractionStore();
   const assetGridStore = createAssetStore();
   const { selectedAssets, assetsInAlbumState } = assetInteractionStore;
 
@@ -68,6 +69,6 @@
     </svelte:fragment>
   </ControlAppBar>
   <section class="bg-immich-bg dark:bg-immich-dark-bg grid h-screen pl-[70px] pt-[100px]">
-    <AssetGrid {assetGridStore} isAlbumSelectionMode={true} />
+    <AssetGrid {assetGridStore} {assetInteractionStore} isAlbumSelectionMode={true} />
   </section>
 </section>

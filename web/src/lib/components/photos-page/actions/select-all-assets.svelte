@@ -3,11 +3,12 @@
   import CircleIconButton from '$lib/components/elements/buttons/circle-icon-button.svelte';
   import SelectAll from 'svelte-material-icons/SelectAll.svelte';
   import TimerSand from 'svelte-material-icons/TimerSand.svelte';
-  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { handleError } from '../../../utils/handle-error';
   import { BucketPosition } from '$lib/models/asset-grid-state';
   import type { AssetStore } from '$lib/stores/assets.store';
+  import type { AssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
+  export let assetInteractionStore: AssetInteractionStore;
   export let assetGridStore: AssetStore;
   let selecting = false;
 

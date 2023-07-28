@@ -11,7 +11,6 @@
   import AssetSelectContextMenu from '$lib/components/photos-page/asset-select-context-menu.svelte';
   import AssetSelectControlBar from '$lib/components/photos-page/asset-select-control-bar.svelte';
   import EmptyPlaceholder from '$lib/components/shared-components/empty-placeholder.svelte';
-  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { createAssetStore } from '$lib/stores/assets.store';
   import { openFileUploadDialog } from '$lib/utils/file-uploader';
   import { api } from '@api';
@@ -19,11 +18,13 @@
   import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
   import Plus from 'svelte-material-icons/Plus.svelte';
   import type { PageData } from './$types';
+  import { createAssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
   export let data: PageData;
   let assetCount = 1;
 
   let assetGridStore = createAssetStore();
+  let assetInteractionStore = createAssetInteractionStore();
   const { isMultiSelect, selectedAssets } = assetInteractionStore;
 
   onMount(async () => {
@@ -47,7 +48,7 @@
     {#if $isMultiSelect}
       <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
         <CreateSharedLink />
-        <SelectAllAssets {assetGridStore} />
+        <SelectAllAssets {assetGridStore} {assetInteractionStore} />
         <AssetSelectContextMenu icon={Plus} title="Add">
           <AddToAlbum />
           <AddToAlbum shared />
@@ -63,7 +64,7 @@
   </svelte:fragment>
   <svelte:fragment slot="content">
     {#if assetCount}
-      <AssetGrid {assetGridStore} showMemoryLane />
+      <AssetGrid {assetGridStore} {assetInteractionStore} showMemoryLane />
     {:else}
       <EmptyPlaceholder text="CLICK TO UPLOAD YOUR FIRST PHOTO" actionHandler={handleUpload} />
     {/if}

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { locale } from '$lib/stores/preferences.store';
   import { getAssetRatio } from '$lib/utils/asset-utils';
   import { formatGroupTitle, splitBucketIntoDateGroups } from '$lib/utils/timeline-util';
@@ -13,11 +12,14 @@
   import Thumbnail from '../assets/thumbnail/thumbnail.svelte';
   import { assetViewingStore } from '$lib/stores/asset-viewing.store';
   import type { AssetStore } from '$lib/stores/assets.store';
+  import type { AssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
-  const { selectedGroup, selectedAssets, assetSelectionCandidates, assetsInAlbumState, isMultiSelect } =
+  export let assetInteractionStore: AssetInteractionStore;
+  export let assetGridStore: AssetStore;
+
+  const { selectedGroup, selectedAssets, assetsInAlbumState, assetSelectionCandidates, isMultiSelect } =
     assetInteractionStore;
 
-  export let assetGridStore: AssetStore;
   export let assets: AssetResponseDto[];
   export let bucketDate: string;
   export let bucketHeight: number;

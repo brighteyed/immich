@@ -1,7 +1,49 @@
 import { derived, writable } from 'svelte/store';
 import type { AssetResponseDto } from '../../api/open-api';
 
-function createAssetInteractionStore() {
+// Define interface for return value of createAssetInteractionStore
+export interface AssetInteractionStore {
+  addAssetToMultiselectGroup: (asset: AssetResponseDto) => void;
+  removeAssetFromMultiselectGroup: (asset: AssetResponseDto) => void;
+  addGroupToMultiselectGroup: (group: string) => void;
+  removeGroupFromMultiselectGroup: (group: string) => void;
+  setAssetSelectionCandidates: (assets: AssetResponseDto[]) => void;
+  clearAssetSelectionCandidates: () => void;
+  setAssetSelectionStart: (asset: AssetResponseDto | null) => void;
+  clearMultiselect: () => void;
+  isMultiSelect: {
+    subscribe: (run: (value: boolean) => void, invalidate?: (value?: boolean) => void) => () => void;
+  };
+  assetsInAlbumState: {
+    subscribe: (
+      run: (value: AssetResponseDto[]) => void,
+      invalidate?: (value?: AssetResponseDto[]) => void,
+    ) => () => void;
+  };
+  selectedAssets: {
+    subscribe: (
+      run: (value: Set<AssetResponseDto>) => void,
+      invalidate?: (value?: Set<AssetResponseDto>) => void,
+    ) => () => void;
+  };
+  selectedGroup: {
+    subscribe: (run: (value: Set<string>) => void, invalidate?: (value?: Set<string>) => void) => () => void;
+  };
+  assetSelectionCandidates: {
+    subscribe: (
+      run: (value: Set<AssetResponseDto>) => void,
+      invalidate?: (value?: Set<AssetResponseDto>) => void,
+    ) => () => void;
+  };
+  assetSelectionStart: {
+    subscribe: (
+      run: (value: AssetResponseDto | null) => void,
+      invalidate?: (value?: AssetResponseDto | null) => void,
+    ) => () => void;
+  };
+}
+
+export function createAssetInteractionStore(): AssetInteractionStore {
   let _selectedAssets: Set<AssetResponseDto>;
   let _selectedGroup: Set<string>;
   let _assetsInAlbums: AssetResponseDto[];
@@ -132,5 +174,3 @@ function createAssetInteractionStore() {
     },
   };
 }
-
-export const assetInteractionStore = createAssetInteractionStore();

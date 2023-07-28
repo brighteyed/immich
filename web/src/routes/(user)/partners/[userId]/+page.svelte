@@ -8,15 +8,16 @@
   import AssetSelectControlBar from '$lib/components/photos-page/asset-select-control-bar.svelte';
   import ControlAppBar from '$lib/components/shared-components/control-app-bar.svelte';
   import { AppRoute } from '$lib/constants';
-  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { onDestroy } from 'svelte';
   import ArrowLeft from 'svelte-material-icons/ArrowLeft.svelte';
   import Plus from 'svelte-material-icons/Plus.svelte';
   import type { PageData } from './$types';
   import { createAssetStore } from '$lib/stores/assets.store';
+  import { createAssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
   export let data: PageData;
 
+  let assetInteractionStore = createAssetInteractionStore();
   let assetGridStore = createAssetStore();
   const { isMultiSelect, selectedAssets } = assetInteractionStore;
 
@@ -48,5 +49,5 @@
       </svelte:fragment>
     </ControlAppBar>
   {/if}
-  <AssetGrid {assetGridStore} user={data.partner} />
+  <AssetGrid {assetGridStore} {assetInteractionStore} user={data.partner} />
 </main>

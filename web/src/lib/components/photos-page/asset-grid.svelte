@@ -1,7 +1,6 @@
 <script lang="ts">
   import { BucketPosition } from '$lib/models/asset-grid-state';
   import { get } from 'svelte/store';
-  import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { assetViewingStore } from '$lib/stores/asset-viewing.store';
   import { locale } from '$lib/stores/preferences.store';
   import { formatGroupTitle, splitBucketIntoDateGroups } from '$lib/utils/timeline-util';
@@ -25,7 +24,9 @@
   import { isSearchEnabled } from '$lib/stores/search.store';
   import ShowShortcuts from '../shared-components/show-shortcuts.svelte';
   import type { AssetStore } from '$lib/stores/assets.store';
+  import type { AssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
+  export let assetInteractionStore: AssetInteractionStore;
   export let assetGridStore: AssetStore;
   export let user: UserResponseDto | undefined = undefined;
   export let isAlbumSelectionMode = false;
@@ -343,6 +344,7 @@
             {#if intersecting}
               <AssetDateGroup
                 {assetGridStore}
+                {assetInteractionStore}
                 {isAlbumSelectionMode}
                 on:shift={handleScrollTimeline}
                 on:selectAssetCandidates={handleSelectAssetCandidates}
