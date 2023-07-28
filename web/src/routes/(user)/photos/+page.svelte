@@ -12,7 +12,7 @@
   import AssetSelectControlBar from '$lib/components/photos-page/asset-select-control-bar.svelte';
   import EmptyPlaceholder from '$lib/components/shared-components/empty-placeholder.svelte';
   import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
-  import { assetStore } from '$lib/stores/assets.store';
+  import { createAssetStore } from '$lib/stores/assets.store';
   import { openFileUploadDialog } from '$lib/utils/file-uploader';
   import { api } from '@api';
   import { onDestroy, onMount } from 'svelte';
@@ -23,6 +23,7 @@
   export let data: PageData;
   let assetCount = 1;
 
+  let assetGridStore = createAssetStore();
   const { isMultiSelect, selectedAssets } = assetInteractionStore;
 
   onMount(async () => {
@@ -46,23 +47,23 @@
     {#if $isMultiSelect}
       <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
         <CreateSharedLink />
-        <SelectAllAssets />
+        <SelectAllAssets {assetGridStore} />
         <AssetSelectContextMenu icon={Plus} title="Add">
           <AddToAlbum />
           <AddToAlbum shared />
         </AssetSelectContextMenu>
-        <DeleteAssets onAssetDelete={assetStore.removeAsset} />
+        <DeleteAssets onAssetDelete={assetGridStore.removeAsset} />
         <AssetSelectContextMenu icon={DotsVertical} title="Menu">
           <FavoriteAction menuItem removeFavorite={isAllFavorite} />
           <DownloadAction menuItem />
-          <ArchiveAction menuItem onAssetArchive={(asset) => assetStore.removeAsset(asset.id)} />
+          <ArchiveAction menuItem onAssetArchive={(asset) => assetGridStore.removeAsset(asset.id)} />
         </AssetSelectContextMenu>
       </AssetSelectControlBar>
     {/if}
   </svelte:fragment>
   <svelte:fragment slot="content">
     {#if assetCount}
-      <AssetGrid showMemoryLane />
+      <AssetGrid {assetGridStore} showMemoryLane />
     {:else}
       <EmptyPlaceholder text="CLICK TO UPLOAD YOUR FIRST PHOTO" actionHandler={handleUpload} />
     {/if}

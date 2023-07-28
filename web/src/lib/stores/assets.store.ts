@@ -2,7 +2,24 @@ import { AssetGridState, BucketPosition } from '$lib/models/asset-grid-state';
 import { api, AssetCountByTimeBucketResponseDto, AssetResponseDto } from '@api';
 import { writable } from 'svelte/store';
 
-function createAssetStore() {
+// define an interface for return value of createAssetStore
+export interface AssetStore {
+  setInitialState: (
+    viewportHeight: number,
+    viewportWidth: number,
+    data: AssetCountByTimeBucketResponseDto,
+    userId: string | undefined,
+  ) => void;
+  getAssetsByBucket: (bucket: string, position: BucketPosition) => Promise<void>;
+  removeAsset: (assetId: string) => void;
+  updateBucketHeight: (bucket: string, actualBucketHeight: number) => number;
+  cancelBucketRequest: (token: AbortController, bucketDate: string) => Promise<void>;
+  navigateAsset: (assetId: string, direction: 'next' | 'previous') => Promise<string | null>;
+  updateAsset: (assetId: string, isFavorite: boolean) => void;
+  subscribe: (run: (value: AssetGridState) => void, invalidate?: (value?: AssetGridState) => void) => () => void;
+}
+
+export function createAssetStore(): AssetStore {
   let _loadingBuckets: { [key: string]: boolean } = {};
   let _assetGridState = new AssetGridState();
 
@@ -257,5 +274,3 @@ function createAssetStore() {
     subscribe,
   };
 }
-
-export const assetStore = createAssetStore();

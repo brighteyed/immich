@@ -1,6 +1,5 @@
 <script lang="ts">
   import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
-  import { assetStore } from '$lib/stores/assets.store';
   import { locale } from '$lib/stores/preferences.store';
   import { getAssetRatio } from '$lib/utils/asset-utils';
   import { formatGroupTitle, splitBucketIntoDateGroups } from '$lib/utils/timeline-util';
@@ -13,10 +12,12 @@
   import { fly } from 'svelte/transition';
   import Thumbnail from '../assets/thumbnail/thumbnail.svelte';
   import { assetViewingStore } from '$lib/stores/asset-viewing.store';
+  import type { AssetStore } from '$lib/stores/assets.store';
 
   const { selectedGroup, selectedAssets, assetSelectionCandidates, assetsInAlbumState, isMultiSelect } =
     assetInteractionStore;
 
+  export let assetGridStore: AssetStore;
   export let assets: AssetResponseDto[];
   export let bucketDate: string;
   export let bucketHeight: number;
@@ -57,7 +58,7 @@
 
   $: {
     if (actualBucketHeight && actualBucketHeight != 0 && actualBucketHeight != bucketHeight) {
-      const heightDelta = assetStore.updateBucketHeight(bucketDate, actualBucketHeight);
+      const heightDelta = assetGridStore.updateBucketHeight(bucketDate, actualBucketHeight);
       if (heightDelta !== 0) {
         scrollTimeline(heightDelta);
       }
@@ -164,7 +165,7 @@
     >
       <!-- Date group title -->
       <p
-        class="mb-2 flex h-6 place-items-center text-xs font-medium text-immich-fg dark:text-immich-dark-fg md:text-sm"
+        class="text-immich-fg dark:text-immich-dark-fg mb-2 flex h-6 place-items-center text-xs font-medium md:text-sm"
         style="width: {geometry[groupIndex].containerWidth}px"
       >
         {#if (hoveredDateGroup == dateGroupTitle && isMouseOverGroup) || $selectedGroup.has(dateGroupTitle)}

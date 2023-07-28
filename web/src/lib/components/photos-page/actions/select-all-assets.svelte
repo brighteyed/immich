@@ -4,19 +4,20 @@
   import SelectAll from 'svelte-material-icons/SelectAll.svelte';
   import TimerSand from 'svelte-material-icons/TimerSand.svelte';
   import { assetInteractionStore } from '$lib/stores/asset-interaction.store';
-  import { assetStore } from '$lib/stores/assets.store';
   import { handleError } from '../../../utils/handle-error';
   import { BucketPosition } from '$lib/models/asset-grid-state';
+  import type { AssetStore } from '$lib/stores/assets.store';
 
+  export let assetGridStore: AssetStore;
   let selecting = false;
 
   const handleSelectAll = async () => {
     try {
       selecting = true;
 
-      const assetGridState = get(assetStore);
+      const assetGridState = get(assetGridStore);
       for (let i = 0; i < assetGridState.buckets.length; i++) {
-        await assetStore.getAssetsByBucket(assetGridState.buckets[i].bucketDate, BucketPosition.Unknown);
+        await assetGridStore.getAssetsByBucket(assetGridState.buckets[i].bucketDate, BucketPosition.Unknown);
         for (const asset of assetGridState.buckets[i].assets) {
           assetInteractionStore.addAssetToMultiselectGroup(asset);
         }

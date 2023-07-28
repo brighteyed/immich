@@ -17,13 +17,14 @@
   import ConfirmDialogue from '$lib/components/shared-components/confirm-dialogue.svelte';
   import ProfileImageCropper from '../shared-components/profile-image-cropper.svelte';
 
-  import { assetStore } from '$lib/stores/assets.store';
   import { isShowDetail } from '$lib/stores/preferences.store';
   import { addAssetsToAlbum, downloadFile } from '$lib/utils/asset-utils';
   import NavigationArea from './navigation-area.svelte';
   import { browser } from '$app/environment';
   import { handleError } from '$lib/utils/handle-error';
+  import type { AssetStore } from '$lib/stores/assets.store';
 
+  export let assetGridStore: AssetStore | null = null;
   export let asset: AssetResponseDto;
   export let publicSharedKey = '';
   export let showNavigation = true;
@@ -134,7 +135,7 @@
 
       for (const asset of deletedAssets) {
         if (asset.status == 'SUCCESS') {
-          assetStore.removeAsset(asset.id);
+          assetGridStore?.removeAsset(asset.id);
         }
       }
     } catch (e) {
@@ -158,14 +159,14 @@
       });
 
       asset.isFavorite = data.isFavorite;
-      assetStore.updateAsset(asset.id, data.isFavorite);
+      assetGridStore?.updateAsset(asset.id, data.isFavorite);
 
       notificationController.show({
         type: NotificationType.Info,
         message: asset.isFavorite ? `Added to favorites` : `Removed from favorites`,
       });
     } catch (error) {
-      handleError(error, `Unable to ${asset.isArchived ? `add asset to` : `remove asset from`} favorites`);
+      handleError(error, `Unable to ${!asset.isFavorite ? `add asset to` : `remove asset from`} favorites`);
     }
   };
 
@@ -282,7 +283,7 @@
       {#if !asset.resized}
         <div class="flex h-full w-full justify-center">
           <div
-            class="px-auto flex aspect-square h-full items-center justify-center bg-gray-100 dark:bg-immich-dark-gray"
+            class="px-auto dark:bg-immich-dark-gray flex aspect-square h-full items-center justify-center bg-gray-100"
           >
             <ImageBrokenVariant size="25%" />
           </div>
@@ -316,7 +317,7 @@
     <div
       transition:fly={{ duration: 150 }}
       id="detail-panel"
-      class="z-[1002] row-span-full w-[360px] overflow-y-auto bg-immich-bg transition-all dark:border-l dark:border-l-immich-dark-gray dark:bg-immich-dark-bg"
+      class="bg-immich-bg dark:border-l-immich-dark-gray dark:bg-immich-dark-bg z-[1002] row-span-full w-[360px] overflow-y-auto transition-all dark:border-l"
       translate="yes"
     >
       <DetailPanel

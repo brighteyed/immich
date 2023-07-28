@@ -19,15 +19,15 @@
 <script lang="ts">
   import { albumAssetSelectionStore } from '$lib/stores/album-asset-selection.store';
 
-  import { assetStore } from '$lib/stores/assets.store';
-
   import { createEventDispatcher } from 'svelte';
   import { SegmentScrollbarLayout } from './segment-scrollbar-layout';
+  import type { AssetStore } from '$lib/stores/assets.store';
 
   export let scrollTop = 0;
   export let scrollbarHeight = 0;
+  export let assetGridStore: AssetStore;
 
-  $: timelineHeight = $assetStore.timelineHeight;
+  $: timelineHeight = $assetGridStore.timelineHeight;
   $: timelineScrolltop = (scrollbarPosition / scrollbarHeight) * timelineHeight;
 
   let segmentScrollbarLayout: SegmentScrollbarLayout[] = [];
@@ -48,7 +48,7 @@
 
   $: {
     let result: SegmentScrollbarLayout[] = [];
-    for (const bucket of $assetStore.buckets) {
+    for (const bucket of $assetGridStore.buckets) {
       let segmentLayout = new SegmentScrollbarLayout();
       segmentLayout.count = bucket.assets.length;
       segmentLayout.height = (bucket.bucketHeight / timelineHeight) * scrollbarHeight;
@@ -94,7 +94,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   id="immich-scrubbable-scrollbar"
-  class="fixed right-0 z-[100] select-none bg-immich-bg hover:cursor-row-resize"
+  class="bg-immich-bg fixed right-0 z-[100] select-none hover:cursor-row-resize"
   style:width={isDragging ? '100vw' : '60px'}
   style:background-color={isDragging ? 'transparent' : 'transparent'}
   on:mouseenter={() => (isHover = true)}
@@ -109,7 +109,7 @@
 >
   {#if isHover}
     <div
-      class="pointer-events-none absolute right-0 z-[100] w-[100px] rounded-tl-md border-b-2 border-immich-primary bg-immich-bg py-1 pl-1 pr-6 text-sm font-medium shadow-lg dark:border-immich-dark-primary dark:bg-immich-dark-gray dark:text-immich-dark-fg"
+      class="border-immich-primary bg-immich-bg dark:border-immich-dark-primary dark:bg-immich-dark-gray dark:text-immich-dark-fg pointer-events-none absolute right-0 z-[100] w-[100px] rounded-tl-md border-b-2 py-1 pl-1 pr-6 text-sm font-medium shadow-lg"
       style:top={currentMouseYLocation + 'px'}
     >
       {hoveredDate?.toLocaleString('default', { month: 'short' })}
@@ -120,7 +120,7 @@
   <!-- Scroll Position Indicator Line -->
   {#if !isDragging}
     <div
-      class="absolute right-0 h-[2px] w-10 bg-immich-primary dark:bg-immich-dark-primary"
+      class="bg-immich-primary dark:bg-immich-dark-primary absolute right-0 h-[2px] w-10"
       style:top={scrollbarPosition + 'px'}
     />
   {/if}
@@ -139,7 +139,7 @@
         {#if segment.height > 8}
           <div
             aria-label={segment.timeGroup + ' ' + segment.count}
-            class="absolute right-0 z-10 pr-5 text-xs font-medium dark:text-immich-dark-fg"
+            class="dark:text-immich-dark-fg absolute right-0 z-10 pr-5 text-xs font-medium"
           >
             {groupDate.getFullYear()}
           </div>

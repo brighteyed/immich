@@ -13,9 +13,11 @@
   import ArrowLeft from 'svelte-material-icons/ArrowLeft.svelte';
   import Plus from 'svelte-material-icons/Plus.svelte';
   import type { PageData } from './$types';
+  import { createAssetStore } from '$lib/stores/assets.store';
 
   export let data: PageData;
 
+  let assetGridStore = createAssetStore();
   const { isMultiSelect, selectedAssets } = assetInteractionStore;
 
   onDestroy(() => {
@@ -23,7 +25,7 @@
   });
 </script>
 
-<main class="grid h-screen bg-immich-bg pt-18 dark:bg-immich-dark-bg">
+<main class="bg-immich-bg pt-18 dark:bg-immich-dark-bg grid h-screen">
   {#if $isMultiSelect}
     <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
       <DownloadAction />
@@ -46,5 +48,5 @@
       </svelte:fragment>
     </ControlAppBar>
   {/if}
-  <AssetGrid user={data.partner} />
+  <AssetGrid {assetGridStore} user={data.partner} />
 </main>
