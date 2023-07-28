@@ -19,6 +19,7 @@ export interface AssetInteractionStore {
       run: (value: AssetResponseDto[]) => void,
       invalidate?: (value?: AssetResponseDto[]) => void,
     ) => () => void;
+    set: (value: AssetResponseDto[]) => void;
   };
   selectedAssets: {
     subscribe: (
@@ -159,6 +160,7 @@ export function createAssetInteractionStore(): AssetInteractionStore {
     },
     assetsInAlbumState: {
       subscribe: assetsInAlbumStoreState.subscribe,
+      set: assetsInAlbumStoreState.set,
     },
     selectedAssets: {
       subscribe: selectedAssets.subscribe,
