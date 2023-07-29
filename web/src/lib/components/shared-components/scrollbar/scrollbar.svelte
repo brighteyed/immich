@@ -94,7 +94,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   id="immich-scrubbable-scrollbar"
-  class="bg-immich-bg fixed right-0 z-[100] select-none hover:cursor-row-resize"
+  class="fixed right-0 z-[100] select-none bg-immich-bg hover:cursor-row-resize"
   style:width={isDragging ? '100vw' : '60px'}
   style:background-color={isDragging ? 'transparent' : 'transparent'}
   on:mouseenter={() => (isHover = true)}
@@ -109,7 +109,7 @@
 >
   {#if isHover}
     <div
-      class="border-immich-primary bg-immich-bg dark:border-immich-dark-primary dark:bg-immich-dark-gray dark:text-immich-dark-fg pointer-events-none absolute right-0 z-[100] w-[100px] rounded-tl-md border-b-2 py-1 pl-1 pr-6 text-sm font-medium shadow-lg"
+      class="pointer-events-none absolute right-0 z-[100] w-[100px] rounded-tl-md border-b-2 border-immich-primary bg-immich-bg py-1 pl-1 pr-6 text-sm font-medium shadow-lg dark:border-immich-dark-primary dark:bg-immich-dark-gray dark:text-immich-dark-fg"
       style:top={currentMouseYLocation + 'px'}
     >
       {hoveredDate?.toLocaleString('default', { month: 'short' })}
@@ -120,7 +120,7 @@
   <!-- Scroll Position Indicator Line -->
   {#if !isDragging}
     <div
-      class="bg-immich-primary dark:bg-immich-dark-primary absolute right-0 h-[2px] w-10"
+      class="absolute right-0 h-[2px] w-10 bg-immich-primary dark:bg-immich-dark-primary"
       style:top={scrollbarPosition + 'px'}
     />
   {/if}
@@ -139,7 +139,7 @@
         {#if segment.height > 8}
           <div
             aria-label={segment.timeGroup + ' ' + segment.count}
-            class="dark:text-immich-dark-fg absolute right-0 z-10 pr-5 text-xs font-medium"
+            class="absolute right-0 z-10 pr-5 text-xs font-medium dark:text-immich-dark-fg"
           >
             {groupDate.getFullYear()}
           </div>
