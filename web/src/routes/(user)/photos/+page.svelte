@@ -23,8 +23,8 @@
   export let data: PageData;
   let assetCount = 1;
 
-  let assetStore = createAssetStore();
-  let assetInteractionStore = createAssetInteractionStore();
+  const assetStore = createAssetStore();
+  const assetInteractionStore = createAssetInteractionStore();
   const { isMultiSelectState, selectedAssets } = assetInteractionStore;
 
   onMount(async () => {

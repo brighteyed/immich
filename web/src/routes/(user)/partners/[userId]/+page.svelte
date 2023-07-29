@@ -17,8 +17,8 @@
 
   export let data: PageData;
 
-  let assetInteractionStore = createAssetInteractionStore();
-  let assetStore = createAssetStore();
+  const assetStore = createAssetStore();
+  const assetInteractionStore = createAssetInteractionStore();
   const { isMultiSelectState, selectedAssets } = assetInteractionStore;
 
   onDestroy(() => {
@@ -26,7 +26,7 @@
   });
 </script>
 
-<main class="grid h-screen bg-immich-bg pt-18 dark:bg-immich-dark-bg">
+<main class="bg-immich-bg pt-18 dark:bg-immich-dark-bg grid h-screen">
   {#if $isMultiSelectState}
     <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
       <CreateSharedLink />
