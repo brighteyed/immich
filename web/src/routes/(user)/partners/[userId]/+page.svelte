@@ -26,7 +26,7 @@
   });
 </script>
 
-<main class="bg-immich-bg pt-18 dark:bg-immich-dark-bg grid h-screen">
+<main class="grid h-screen bg-immich-bg pt-18 dark:bg-immich-dark-bg">
   {#if $isMultiSelectState}
     <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
       <CreateSharedLink />

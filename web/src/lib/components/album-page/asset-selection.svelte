@@ -40,7 +40,7 @@
 
 <section
   transition:fly={{ y: 500, duration: 100, easing: quintOut }}
-  class="bg-immich-bg dark:bg-immich-dark-bg absolute left-0 top-0 z-[9999] h-full w-full"
+  class="absolute left-0 top-0 z-[9999] h-full w-full bg-immich-bg dark:bg-immich-dark-bg"
 >
   <ControlAppBar
     on:close-button-click={() => {
@@ -50,9 +50,9 @@
   >
     <svelte:fragment slot="leading">
       {#if $selectedAssets.size == 0}
-        <p class="dark:text-immich-dark-fg text-lg">Add to album</p>
+        <p class="text-lg dark:text-immich-dark-fg">Add to album</p>
       {:else}
-        <p class="dark:text-immich-dark-fg text-lg">
+        <p class="text-lg dark:text-immich-dark-fg">
           {$selectedAssets.size.toLocaleString($locale)} selected
         </p>
       {/if}
@@ -61,14 +61,14 @@
     <svelte:fragment slot="trailing">
       <button
         on:click={handleSelectFromComputerClicked}
-        class="text-immich-primary hover:bg-immich-primary/10 dark:text-immich-dark-primary dark:hover:bg-immich-dark-primary/25 rounded-lg px-6 py-2 text-sm font-medium transition-all"
+        class="rounded-lg px-6 py-2 text-sm font-medium text-immich-primary transition-all hover:bg-immich-primary/10 dark:text-immich-dark-primary dark:hover:bg-immich-dark-primary/25"
       >
         Select from computer
       </button>
       <Button size="sm" rounded="lg" disabled={$selectedAssets.size === 0} on:click={addSelectedAssets}>Done</Button>
     </svelte:fragment>
   </ControlAppBar>
-  <section class="bg-immich-bg dark:bg-immich-dark-bg grid h-screen pl-[70px] pt-[100px]">
+  <section class="grid h-screen bg-immich-bg pl-[70px] pt-[100px] dark:bg-immich-dark-bg">
     <AssetGrid {assetStore} {assetInteractionStore} isAlbumSelectionMode={true} />
   </section>
 </section>
