@@ -12,13 +12,13 @@
   import AssetSelectControlBar from '$lib/components/photos-page/asset-select-control-bar.svelte';
   import EmptyPlaceholder from '$lib/components/shared-components/empty-placeholder.svelte';
   import { createAssetStore } from '$lib/stores/assets.store';
+  import { createAssetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { openFileUploadDialog } from '$lib/utils/file-uploader';
   import { api } from '@api';
   import { onDestroy, onMount } from 'svelte';
   import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
   import Plus from 'svelte-material-icons/Plus.svelte';
   import type { PageData } from './$types';
-  import { createAssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
   export let data: PageData;
   let assetCount = 1;
