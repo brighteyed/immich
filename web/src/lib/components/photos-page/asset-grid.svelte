@@ -1,6 +1,5 @@
 <script lang="ts">
   import { BucketPosition } from '$lib/models/asset-grid-state';
-  import { get } from 'svelte/store';
   import { assetViewingStore } from '$lib/stores/asset-viewing.store';
   import { locale } from '$lib/stores/preferences.store';
   import { formatGroupTitle, splitBucketIntoDateGroups } from '$lib/utils/timeline-util';
@@ -32,8 +31,7 @@
   export let isAlbumSelectionMode = false;
   export let showMemoryLane = false;
 
-  let showAssetViewer = assetViewingStore.isViewing;
-  let viewingAsset = assetViewingStore.asset;
+  let { isViewing: showAssetViewer, asset: viewingAsset } = assetViewingStore;
 
   let viewportHeight = 0;
   let viewportWidth = 0;
@@ -119,14 +117,14 @@
   }
 
   const navigateToPreviousAsset = async () => {
-    const prevAsset = await assetGridStore.navigateAsset(get(assetViewingStore.asset).id, 'previous');
+    const prevAsset = await assetGridStore.navigateAsset($viewingAsset.id, 'previous');
     if (prevAsset) {
       assetViewingStore.setAssetId(prevAsset);
     }
   };
 
   const navigateToNextAsset = async () => {
-    const nextAsset = await assetGridStore.navigateAsset(get(assetViewingStore.asset).id, 'next');
+    const nextAsset = await assetGridStore.navigateAsset($viewingAsset.id, 'next');
     if (nextAsset) {
       assetViewingStore.setAssetId(nextAsset);
     }

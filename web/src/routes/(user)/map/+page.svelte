@@ -14,8 +14,7 @@
 
   export let data: PageData;
 
-  let showAssetViewer = assetViewingStore.isViewing;
-  let viewingAsset = assetViewingStore.asset;
+  let { isViewing: showAssetViewer, asset: viewingAsset } = assetViewingStore;
 
   let leaflet: typeof import('$lib/components/shared-components/leaflet');
   let mapMarkers: MapMarkerResponseDto[] = [];

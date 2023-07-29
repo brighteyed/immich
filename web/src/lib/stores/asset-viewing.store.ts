@@ -3,16 +3,16 @@ import { api, type AssetResponseDto } from '@api';
 
 function createAssetViewingStore() {
   const viewingAssetStoreState = writable<AssetResponseDto>();
-  const showState = writable<boolean>(false);
+  const viewState = writable<boolean>(false);
 
   const setAssetId = async (id: string) => {
     const { data } = await api.assetApi.getAssetById({ id });
     viewingAssetStoreState.set(data);
-    showState.set(true);
+    viewState.set(true);
   };
 
   const showAssetViewer = (show: boolean) => {
-    showState.set(show);
+    viewState.set(show);
   };
 
   return {
@@ -20,7 +20,7 @@ function createAssetViewingStore() {
       subscribe: viewingAssetStoreState.subscribe,
     },
     isViewing: {
-      subscribe: showState.subscribe,
+      subscribe: viewState.subscribe,
     },
     setAssetId,
     showAssetViewer,
