@@ -24,7 +24,7 @@
   import { handleError } from '$lib/utils/handle-error';
   import type { AssetStore } from '$lib/stores/assets.store';
 
-  export let assetGridStore: AssetStore | null = null;
+  export let assetStore: AssetStore | null = null;
   export let asset: AssetResponseDto;
   export let publicSharedKey = '';
   export let showNavigation = true;
@@ -135,7 +135,7 @@
 
       for (const asset of deletedAssets) {
         if (asset.status == 'SUCCESS') {
-          assetGridStore?.removeAsset(asset.id);
+          assetStore?.removeAsset(asset.id);
         }
       }
     } catch (e) {
@@ -159,7 +159,7 @@
       });
 
       asset.isFavorite = data.isFavorite;
-      assetGridStore?.updateAsset(asset.id, data.isFavorite);
+      assetStore?.updateAsset(asset.id, data.isFavorite);
 
       notificationController.show({
         type: NotificationType.Info,

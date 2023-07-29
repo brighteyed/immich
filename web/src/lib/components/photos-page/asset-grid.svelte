@@ -26,7 +26,7 @@
   import type { AssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
   export let assetInteractionStore: AssetInteractionStore;
-  export let assetGridStore: AssetStore;
+  export let assetStore: AssetStore;
   export let user: UserResponseDto | undefined = undefined;
   export let isAlbumSelectionMode = false;
   export let showMemoryLane = false;
@@ -54,12 +54,12 @@
 
     bucketInfo = assetCountByTimebucket;
 
-    assetGridStore.setInitialState(viewportHeight, viewportWidth, assetCountByTimebucket, user?.id);
+    assetStore.setInitialState(viewportHeight, viewportWidth, assetCountByTimebucket, user?.id);
 
     // Get asset bucket if bucket height is smaller than viewport height
     let bucketsToFetchInitially: string[] = [];
     let initialBucketsHeight = 0;
-    $assetGridStore.buckets.every((bucket) => {
+    $assetStore.buckets.every((bucket) => {
       if (initialBucketsHeight < viewportHeight) {
         initialBucketsHeight += bucket.bucketHeight;
         bucketsToFetchInitially.push(bucket.bucketDate);
@@ -70,7 +70,7 @@
     });
 
     bucketsToFetchInitially.forEach((bucketDate) => {
-      assetGridStore.getAssetsByBucket(bucketDate, BucketPosition.Visible);
+      assetStore.getAssetsByBucket(bucketDate, BucketPosition.Visible);
     });
   });
 
@@ -79,7 +79,7 @@
       document.removeEventListener('keydown', onKeyboardPress);
     }
 
-    assetGridStore.setInitialState(0, 0, { totalCount: 0, buckets: [] }, undefined);
+    assetStore.setInitialState(0, 0, { totalCount: 0, buckets: [] }, undefined);
   });
 
   const handleKeyboardPress = (event: KeyboardEvent) => {
@@ -108,7 +108,7 @@
     const target = el.firstChild as HTMLElement;
     if (target) {
       const bucketDate = target.id.split('_')[1];
-      assetGridStore.getAssetsByBucket(bucketDate, event.detail.position);
+      assetStore.getAssetsByBucket(bucketDate, event.detail.position);
     }
   }
 
@@ -117,14 +117,14 @@
   }
 
   const navigateToPreviousAsset = async () => {
-    const prevAsset = await assetGridStore.navigateAsset($viewingAsset.id, 'previous');
+    const prevAsset = await assetStore.navigateAsset($viewingAsset.id, 'previous');
     if (prevAsset) {
       assetViewingStore.setAssetId(prevAsset);
     }
   };
 
   const navigateToNextAsset = async () => {
-    const nextAsset = await assetGridStore.navigateAsset($viewingAsset.id, 'next');
+    const nextAsset = await assetStore.navigateAsset($viewingAsset.id, 'next');
     if (nextAsset) {
       assetViewingStore.setAssetId(nextAsset);
     }
@@ -155,7 +155,7 @@
   const handleArchiveSuccess = (e: CustomEvent) => {
     const asset = e.detail as AssetResponseDto;
     navigateToNextAsset();
-    assetGridStore.removeAsset(asset.id);
+    assetStore.removeAsset(asset.id);
   };
 
   let lastAssetMouseEvent: AssetResponseDto | null = null;
@@ -229,8 +229,8 @@
     assetInteractionStore.clearAssetSelectionCandidates();
 
     if ($assetSelectionStart && rangeSelection) {
-      let startBucketIndex = $assetGridStore.loadedAssets[$assetSelectionStart.id];
-      let endBucketIndex = $assetGridStore.loadedAssets[asset.id];
+      let startBucketIndex = $assetStore.loadedAssets[$assetSelectionStart.id];
+      let endBucketIndex = $assetStore.loadedAssets[asset.id];
 
       if (endBucketIndex < startBucketIndex) {
         [startBucketIndex, endBucketIndex] = [endBucketIndex, startBucketIndex];
@@ -238,8 +238,8 @@
 
       // Select/deselect assets in all intermediate buckets
       for (let bucketIndex = startBucketIndex + 1; bucketIndex < endBucketIndex; bucketIndex++) {
-        const bucket = $assetGridStore.buckets[bucketIndex];
-        await assetGridStore.getAssetsByBucket(bucket.bucketDate, BucketPosition.Unknown);
+        const bucket = $assetStore.buckets[bucketIndex];
+        await assetStore.getAssetsByBucket(bucket.bucketDate, BucketPosition.Unknown);
         for (const asset of bucket.assets) {
           if (deselect) {
             assetInteractionStore.removeAssetFromMultiselectGroup(asset);
@@ -251,7 +251,7 @@
 
       // Update date group selection
       for (let bucketIndex = startBucketIndex; bucketIndex <= endBucketIndex; bucketIndex++) {
-        const bucket = $assetGridStore.buckets[bucketIndex];
+        const bucket = $assetStore.buckets[bucketIndex];
 
         // Split bucket into date groups and check each group
         const assetsGroupByDate = splitBucketIntoDateGroups(bucket.assets, $locale);
@@ -280,14 +280,14 @@
       return;
     }
 
-    let start = $assetGridStore.assets.indexOf(rangeStart);
-    let end = $assetGridStore.assets.indexOf(asset);
+    let start = $assetStore.assets.indexOf(rangeStart);
+    let end = $assetStore.assets.indexOf(asset);
 
     if (start > end) {
       [start, end] = [end, start];
     }
 
-    assetInteractionStore.setAssetSelectionCandidates($assetGridStore.assets.slice(start, end + 1));
+    assetInteractionStore.setAssetSelectionCandidates($assetStore.assets.slice(start, end + 1));
   };
 
   const onSelectStart = (e: Event) => {
@@ -303,9 +303,9 @@
   <ShowShortcuts on:close={() => (showShortcuts = !showShortcuts)} />
 {/if}
 
-{#if bucketInfo && viewportHeight && $assetGridStore.timelineHeight > viewportHeight}
+{#if bucketInfo && viewportHeight && $assetStore.timelineHeight > viewportHeight}
   <Scrollbar
-    {assetGridStore}
+    {assetStore}
     scrollbarHeight={viewportHeight}
     scrollTop={lastScrollPosition}
     on:onscrollbarclick={(e) => handleScrollbarClick(e.detail)}
@@ -326,12 +326,12 @@
     {#if showMemoryLane}
       <MemoryLane />
     {/if}
-    <section id="virtual-timeline" style:height={$assetGridStore.timelineHeight + 'px'}>
-      {#each $assetGridStore.buckets as bucket, bucketIndex (bucketIndex)}
+    <section id="virtual-timeline" style:height={$assetStore.timelineHeight + 'px'}>
+      {#each $assetStore.buckets as bucket, bucketIndex (bucketIndex)}
         <IntersectionObserver
           on:intersected={intersectedHandler}
           on:hidden={async () => {
-            await assetGridStore.cancelBucketRequest(bucket.cancelToken, bucket.bucketDate);
+            await assetStore.cancelBucketRequest(bucket.cancelToken, bucket.bucketDate);
           }}
           let:intersecting
           top={750}
@@ -341,7 +341,7 @@
           <div id={'bucket_' + bucket.bucketDate} style:height={bucket.bucketHeight + 'px'}>
             {#if intersecting}
               <AssetDateGroup
-                {assetGridStore}
+                {assetStore}
                 {assetInteractionStore}
                 {isAlbumSelectionMode}
                 on:shift={handleScrollTimeline}
@@ -363,7 +363,7 @@
 <Portal target="body">
   {#if $showAssetViewer}
     <AssetViewer
-      {assetGridStore}
+      {assetStore}
       asset={$viewingAsset}
       on:navigate-previous={navigateToPreviousAsset}
       on:navigate-next={navigateToNextAsset}

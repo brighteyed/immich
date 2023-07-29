@@ -9,16 +9,16 @@
   import type { AssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
   export let assetInteractionStore: AssetInteractionStore;
-  export let assetGridStore: AssetStore;
+  export let assetStore: AssetStore;
   let selecting = false;
 
   const handleSelectAll = async () => {
     try {
       selecting = true;
 
-      const assetGridState = get(assetGridStore);
+      const assetGridState = get(assetStore);
       for (let i = 0; i < assetGridState.buckets.length; i++) {
-        await assetGridStore.getAssetsByBucket(assetGridState.buckets[i].bucketDate, BucketPosition.Unknown);
+        await assetStore.getAssetsByBucket(assetGridState.buckets[i].bucketDate, BucketPosition.Unknown);
         for (const asset of assetGridState.buckets[i].assets) {
           assetInteractionStore.addAssetToMultiselectGroup(asset);
         }

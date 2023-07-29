@@ -25,9 +25,9 @@
 
   export let scrollTop = 0;
   export let scrollbarHeight = 0;
-  export let assetGridStore: AssetStore;
+  export let assetStore: AssetStore;
 
-  $: timelineHeight = $assetGridStore.timelineHeight;
+  $: timelineHeight = $assetStore.timelineHeight;
   $: timelineScrolltop = (scrollbarPosition / scrollbarHeight) * timelineHeight;
 
   let segmentScrollbarLayout: SegmentScrollbarLayout[] = [];
@@ -48,7 +48,7 @@
 
   $: {
     let result: SegmentScrollbarLayout[] = [];
-    for (const bucket of $assetGridStore.buckets) {
+    for (const bucket of $assetStore.buckets) {
       let segmentLayout = new SegmentScrollbarLayout();
       segmentLayout.count = bucket.assets.length;
       segmentLayout.height = (bucket.bucketHeight / timelineHeight) * scrollbarHeight;

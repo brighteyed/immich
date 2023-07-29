@@ -14,7 +14,7 @@
   const dispatch = createEventDispatcher();
 
   const assetInteractionStore = createAssetInteractionStore();
-  const assetGridStore = createAssetStore();
+  const assetStore = createAssetStore();
   const { selectedAssets, assetsInAlbumState } = assetInteractionStore;
 
   export let albumId: string;
@@ -69,6 +69,6 @@
     </svelte:fragment>
   </ControlAppBar>
   <section class="grid h-screen bg-immich-bg pl-[70px] pt-[100px] dark:bg-immich-dark-bg">
-    <AssetGrid {assetGridStore} {assetInteractionStore} isAlbumSelectionMode={true} />
+    <AssetGrid {assetStore} {assetInteractionStore} isAlbumSelectionMode={true} />
   </section>
 </section>

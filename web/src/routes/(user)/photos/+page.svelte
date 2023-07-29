@@ -23,7 +23,7 @@
   export let data: PageData;
   let assetCount = 1;
 
-  let assetGridStore = createAssetStore();
+  let assetStore = createAssetStore();
   let assetInteractionStore = createAssetInteractionStore();
   const { isMultiSelectState, selectedAssets } = assetInteractionStore;
 
@@ -48,23 +48,23 @@
     {#if $isMultiSelectState}
       <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
         <CreateSharedLink />
-        <SelectAllAssets {assetGridStore} {assetInteractionStore} />
+        <SelectAllAssets {assetStore} {assetInteractionStore} />
         <AssetSelectContextMenu icon={Plus} title="Add">
           <AddToAlbum />
           <AddToAlbum shared />
         </AssetSelectContextMenu>
-        <DeleteAssets onAssetDelete={assetGridStore.removeAsset} />
+        <DeleteAssets onAssetDelete={assetStore.removeAsset} />
         <AssetSelectContextMenu icon={DotsVertical} title="Menu">
           <FavoriteAction menuItem removeFavorite={isAllFavorite} />
           <DownloadAction menuItem />
-          <ArchiveAction menuItem onAssetArchive={(asset) => assetGridStore.removeAsset(asset.id)} />
+          <ArchiveAction menuItem onAssetArchive={(asset) => assetStore.removeAsset(asset.id)} />
         </AssetSelectContextMenu>
       </AssetSelectControlBar>
     {/if}
   </svelte:fragment>
   <svelte:fragment slot="content">
     {#if assetCount}
-      <AssetGrid {assetGridStore} {assetInteractionStore} showMemoryLane />
+      <AssetGrid {assetStore} {assetInteractionStore} showMemoryLane />
     {:else}
       <EmptyPlaceholder text="CLICK TO UPLOAD YOUR FIRST PHOTO" actionHandler={handleUpload} />
     {/if}

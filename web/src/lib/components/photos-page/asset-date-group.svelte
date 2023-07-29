@@ -15,7 +15,7 @@
   import type { AssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
   export let assetInteractionStore: AssetInteractionStore;
-  export let assetGridStore: AssetStore;
+  export let assetStore: AssetStore;
 
   const { selectedGroup, selectedAssets, assetsInAlbumState, assetSelectionCandidates, isMultiSelectState } =
     assetInteractionStore;
@@ -60,7 +60,7 @@
 
   $: {
     if (actualBucketHeight && actualBucketHeight != 0 && actualBucketHeight != bucketHeight) {
-      const heightDelta = assetGridStore.updateBucketHeight(bucketDate, actualBucketHeight);
+      const heightDelta = assetStore.updateBucketHeight(bucketDate, actualBucketHeight);
       if (heightDelta !== 0) {
         scrollTimeline(heightDelta);
       }

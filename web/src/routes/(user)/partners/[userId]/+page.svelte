@@ -18,7 +18,7 @@
   export let data: PageData;
 
   let assetInteractionStore = createAssetInteractionStore();
-  let assetGridStore = createAssetStore();
+  let assetStore = createAssetStore();
   const { isMultiSelectState, selectedAssets } = assetInteractionStore;
 
   onDestroy(() => {
@@ -26,7 +26,7 @@
   });
 </script>
 
-<main class="bg-immich-bg pt-18 dark:bg-immich-dark-bg grid h-screen">
+<main class="grid h-screen bg-immich-bg pt-18 dark:bg-immich-dark-bg">
   {#if $isMultiSelectState}
     <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
       <CreateSharedLink />
@@ -46,5 +46,5 @@
       </svelte:fragment>
     </ControlAppBar>
   {/if}
-  <AssetGrid {assetGridStore} {assetInteractionStore} user={data.partner} />
+  <AssetGrid {assetStore} {assetInteractionStore} user={data.partner} />
 </main>
