@@ -119,14 +119,14 @@
   }
 
   const navigateToPreviousAsset = async () => {
-    const prevAsset = await assetStore.navigateAsset($viewingAsset.id, 'previous');
+    const prevAsset = await assetStore.getAdjacentAsset($viewingAsset.id, 'previous');
     if (prevAsset) {
       assetViewingStore.setAssetId(prevAsset);
     }
   };
 
   const navigateToNextAsset = async () => {
-    const nextAsset = await assetStore.navigateAsset($viewingAsset.id, 'next');
+    const nextAsset = await assetStore.getAdjacentAsset($viewingAsset.id, 'next');
     if (nextAsset) {
       assetViewingStore.setAssetId(nextAsset);
     }

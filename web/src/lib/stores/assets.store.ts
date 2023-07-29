@@ -12,7 +12,7 @@ export interface AssetStore {
   getAssetsByBucket: (bucket: string, position: BucketPosition) => Promise<void>;
   updateBucketHeight: (bucket: string, actualBucketHeight: number) => number;
   cancelBucketRequest: (token: AbortController, bucketDate: string) => Promise<void>;
-  navigateAsset: (assetId: string, direction: 'next' | 'previous') => Promise<string | null>;
+  getAdjacentAsset: (assetId: string, direction: 'next' | 'previous') => Promise<string | null>;
   removeAsset: (assetId: string) => void;
   updateAsset: (assetId: string, isFavorite: boolean) => void;
   subscribe: (run: (value: AssetGridState) => void, invalidate?: (value?: AssetGridState) => void) => () => void;
@@ -241,7 +241,7 @@ export function createAssetStore(): AssetStore {
     return prevBucket.assets[prevBucket.assets.length - 1] ?? null;
   };
 
-  const navigateAsset = async (assetId: string, direction: 'next' | 'previous'): Promise<string | null> => {
+  const getAdjacentAsset = async (assetId: string, direction: 'next' | 'previous'): Promise<string | null> => {
     const currentBucketIndex = _assetGridState.loadedAssets[assetId];
     if (currentBucketIndex < 0 || currentBucketIndex >= _assetGridState.buckets.length) {
       return null;
@@ -261,7 +261,7 @@ export function createAssetStore(): AssetStore {
     removeAsset,
     updateBucketHeight,
     cancelBucketRequest,
-    navigateAsset,
+    getAdjacentAsset,
     updateAsset,
     subscribe,
   };
