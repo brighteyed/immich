@@ -29,6 +29,9 @@
 <main class="grid h-screen bg-immich-bg pt-18 dark:bg-immich-dark-bg">
   {#if $isMultiSelectState}
     <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
+      <DownloadAction />
+    </AssetSelectControlBar>
+    <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
       <CreateSharedLink />
       <AssetSelectContextMenu icon={Plus} title="Add">
         <AddToAlbum />
