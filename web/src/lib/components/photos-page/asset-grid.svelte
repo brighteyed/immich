@@ -39,7 +39,7 @@
   let bucketInfo: AssetCountByTimeBucketResponseDto;
   let showShortcuts = false;
 
-  const { assetSelectionCandidates, assetSelectionStart, selectedAssets, isMultiSelect } = assetInteractionStore;
+  const { assetSelectionCandidates, assetSelectionStart, selectedAssets, isMultiSelectState } = assetInteractionStore;
   const onKeyboardPress = (event: KeyboardEvent) => handleKeyboardPress(event);
 
   onMount(async () => {
@@ -291,7 +291,7 @@
   };
 
   const onSelectStart = (e: Event) => {
-    if ($isMultiSelect && shiftKeyIsDown) {
+    if ($isMultiSelectState && shiftKeyIsDown) {
       e.preventDefault();
     }
   };

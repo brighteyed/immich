@@ -1,7 +1,6 @@
 import { derived, writable } from 'svelte/store';
 import type { AssetResponseDto } from '../../api/open-api';
 
-// Define interface for return value of createAssetInteractionStore
 export interface AssetInteractionStore {
   addAssetToMultiselectGroup: (asset: AssetResponseDto) => void;
   removeAssetFromMultiselectGroup: (asset: AssetResponseDto) => void;
@@ -11,7 +10,7 @@ export interface AssetInteractionStore {
   clearAssetSelectionCandidates: () => void;
   setAssetSelectionStart: (asset: AssetResponseDto | null) => void;
   clearMultiselect: () => void;
-  isMultiSelect: {
+  isMultiSelectState: {
     subscribe: (run: (value: boolean) => void, invalidate?: (value?: boolean) => void) => () => void;
   };
   assetsInAlbumState: {
@@ -84,11 +83,7 @@ export function createAssetInteractionStore(): AssetInteractionStore {
   assetSelectionStart.subscribe((asset) => {
     _assetSelectionStart = asset;
   });
-  // Methods
 
-  /**
-   * Multiselect
-   */
   const addAssetToMultiselectGroup = (asset: AssetResponseDto) => {
     // Not select if in album already
     if (_assetsInAlbums.find((a) => a.id === asset.id)) {
@@ -155,7 +150,7 @@ export function createAssetInteractionStore(): AssetInteractionStore {
     clearAssetSelectionCandidates,
     setAssetSelectionStart,
     clearMultiselect,
-    isMultiSelect: {
+    isMultiSelectState: {
       subscribe: isMultiSelectStoreState.subscribe,
     },
     assetsInAlbumState: {

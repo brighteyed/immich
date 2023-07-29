@@ -17,7 +17,7 @@
   export let assetInteractionStore: AssetInteractionStore;
   export let assetGridStore: AssetStore;
 
-  const { selectedGroup, selectedAssets, assetsInAlbumState, assetSelectionCandidates, isMultiSelect } =
+  const { selectedGroup, selectedAssets, assetsInAlbumState, assetSelectionCandidates, isMultiSelectState } =
     assetInteractionStore;
 
   export let assets: AssetResponseDto[];
@@ -94,7 +94,7 @@
       return;
     }
 
-    if ($isMultiSelect) {
+    if ($isMultiSelectState) {
       assetSelectHandler(asset, assetsInDateGroup, dateGroupTitle);
     } else {
       assetViewingStore.setAssetId(asset.id);
@@ -137,7 +137,7 @@
     // Show multi select icon on hover on date group
     hoveredDateGroup = dateGroupTitle;
 
-    if ($isMultiSelect) {
+    if ($isMultiSelectState) {
       dispatch('selectAssetCandidates', { asset });
     }
   };

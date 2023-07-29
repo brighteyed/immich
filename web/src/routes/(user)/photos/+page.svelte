@@ -25,7 +25,7 @@
 
   let assetGridStore = createAssetStore();
   let assetInteractionStore = createAssetInteractionStore();
-  const { isMultiSelect, selectedAssets } = assetInteractionStore;
+  const { isMultiSelectState, selectedAssets } = assetInteractionStore;
 
   onMount(async () => {
     const { data: stats } = await api.assetApi.getAssetStats();
@@ -43,9 +43,9 @@
   };
 </script>
 
-<UserPageLayout user={data.user} hideNavbar={$isMultiSelect} showUploadButton>
+<UserPageLayout user={data.user} hideNavbar={$isMultiSelectState} showUploadButton>
   <svelte:fragment slot="header">
-    {#if $isMultiSelect}
+    {#if $isMultiSelectState}
       <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
         <CreateSharedLink />
         <SelectAllAssets {assetGridStore} {assetInteractionStore} />

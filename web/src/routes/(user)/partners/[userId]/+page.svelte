@@ -19,7 +19,7 @@
 
   let assetInteractionStore = createAssetInteractionStore();
   let assetGridStore = createAssetStore();
-  const { isMultiSelect, selectedAssets } = assetInteractionStore;
+  const { isMultiSelectState, selectedAssets } = assetInteractionStore;
 
   onDestroy(() => {
     assetInteractionStore.clearMultiselect();
@@ -27,7 +27,7 @@
 </script>
 
 <main class="bg-immich-bg pt-18 dark:bg-immich-dark-bg grid h-screen">
-  {#if $isMultiSelect}
+  {#if $isMultiSelectState}
     <AssetSelectControlBar assets={$selectedAssets} clearSelect={assetInteractionStore.clearMultiselect}>
       <DownloadAction />
     </AssetSelectControlBar>
