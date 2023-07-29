@@ -2,7 +2,6 @@ import { AssetGridState, BucketPosition } from '$lib/models/asset-grid-state';
 import { api, AssetCountByTimeBucketResponseDto, AssetResponseDto } from '@api';
 import { writable } from 'svelte/store';
 
-// define an interface for return value of createAssetStore
 export interface AssetStore {
   setInitialState: (
     viewportHeight: number,
@@ -11,10 +10,10 @@ export interface AssetStore {
     userId: string | undefined,
   ) => void;
   getAssetsByBucket: (bucket: string, position: BucketPosition) => Promise<void>;
-  removeAsset: (assetId: string) => void;
   updateBucketHeight: (bucket: string, actualBucketHeight: number) => number;
   cancelBucketRequest: (token: AbortController, bucketDate: string) => Promise<void>;
   navigateAsset: (assetId: string, direction: 'next' | 'previous') => Promise<string | null>;
+  removeAsset: (assetId: string) => void;
   updateAsset: (assetId: string, isFavorite: boolean) => void;
   subscribe: (run: (value: AssetGridState) => void, invalidate?: (value?: AssetGridState) => void) => () => void;
 }
@@ -49,12 +48,6 @@ export function createAssetStore(): AssetStore {
     );
   };
 
-  /**
-   * Set initial state
-   * @param viewportHeight
-   * @param viewportWidth
-   * @param data
-   */
   const setInitialState = (
     viewportHeight: number,
     viewportWidth: number,
@@ -77,7 +70,6 @@ export function createAssetStore(): AssetStore {
       userId,
     });
 
-    // Update timeline height based on calculated bucket height
     update((state) => {
       state.timelineHeight = state.buckets.reduce((acc, b) => acc + b.bucketHeight, 0);
       return state;
