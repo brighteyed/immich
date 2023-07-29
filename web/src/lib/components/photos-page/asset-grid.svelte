@@ -25,11 +25,14 @@
   import type { AssetStore } from '$lib/stores/assets.store';
   import type { AssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
-  export let assetInteractionStore: AssetInteractionStore;
-  export let assetStore: AssetStore;
   export let user: UserResponseDto | undefined = undefined;
   export let isAlbumSelectionMode = false;
   export let showMemoryLane = false;
+
+  export let assetStore: AssetStore;
+  export let assetInteractionStore: AssetInteractionStore;
+
+  const { assetSelectionCandidates, assetSelectionStart, selectedAssets, isMultiSelectState } = assetInteractionStore;
 
   let { isViewing: showAssetViewer, asset: viewingAsset } = assetViewingStore;
 
@@ -39,7 +42,6 @@
   let bucketInfo: AssetCountByTimeBucketResponseDto;
   let showShortcuts = false;
 
-  const { assetSelectionCandidates, assetSelectionStart, selectedAssets, isMultiSelectState } = assetInteractionStore;
   const onKeyboardPress = (event: KeyboardEvent) => handleKeyboardPress(event);
 
   onMount(async () => {

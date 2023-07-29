@@ -14,17 +14,17 @@
   import type { AssetStore } from '$lib/stores/assets.store';
   import type { AssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
-  export let assetInteractionStore: AssetInteractionStore;
-  export let assetStore: AssetStore;
-
-  const { selectedGroup, selectedAssets, assetsInAlbumState, assetSelectionCandidates, isMultiSelectState } =
-    assetInteractionStore;
-
   export let assets: AssetResponseDto[];
   export let bucketDate: string;
   export let bucketHeight: number;
   export let isAlbumSelectionMode = false;
   export let viewportWidth: number;
+
+  export let assetStore: AssetStore;
+  export let assetInteractionStore: AssetInteractionStore;
+
+  const { selectedGroup, selectedAssets, assetsInAlbumState, assetSelectionCandidates, isMultiSelectState } =
+    assetInteractionStore;
 
   const dispatch = createEventDispatcher();
 

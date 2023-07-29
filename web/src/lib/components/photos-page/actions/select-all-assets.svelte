@@ -8,8 +8,9 @@
   import type { AssetStore } from '$lib/stores/assets.store';
   import type { AssetInteractionStore } from '$lib/stores/asset-interaction.store';
 
-  export let assetInteractionStore: AssetInteractionStore;
   export let assetStore: AssetStore;
+  export let assetInteractionStore: AssetInteractionStore;
+
   let selecting = false;
 
   const handleSelectAll = async () => {
